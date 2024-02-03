@@ -40,13 +40,23 @@ app.use(express.urlencoded({extended:true}));
 app.use(passport.initialize());
 
 
+//////////
+//////////
+
+//////////
+//API ROUTES
+
+
+//////////
+//////////
+
+//////////
+//DATABASE CONNECTION
 mongoose.connect(process.env.MONGO_URI)
 .then((result)=> app.listen(process.env.PORT,()=>{
     console.log('Server running');
 }))
 .catch((err)=> console.log(err));
 
-//Launch the server
-// app.listen(3000, ()=>{
-//     console.log('Server running');
-// });
+//////////
+//////////
