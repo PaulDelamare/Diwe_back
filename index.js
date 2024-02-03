@@ -13,9 +13,10 @@ const cors = require('cors');
 
 const port = process.env.JWT_SECRET
 const app = express();
+const mongoose = require('mongoose');
 
 const passport = require('passport');
-require('./config/passport-config')(passport);
+// require('./config/passport-config')(passport);
 
 //
 //////////
@@ -39,7 +40,13 @@ app.use(express.urlencoded({extended:true}));
 app.use(passport.initialize());
 
 
-//Launch the server
-app.listen(port, ()=>{
+mongoose.connect(process.env.MONGO_URI)
+.then((result)=> app.listen(process.env.PORT,()=>{
     console.log('Server running');
-});
+}))
+.catch((err)=> console.log(err));
+
+//Launch the server
+// app.listen(3000, ()=>{
+//     console.log('Server running');
+// });
