@@ -12,7 +12,7 @@ const AuthController = require('../controller/auth.controller');
 //API ROUTES
 
 //ROUTE REGISTER
-router.post('/register', AuthController.create);
+router.post('/auth/register', AuthController.create);
 
 //Export router and users
 module.exports = router;
