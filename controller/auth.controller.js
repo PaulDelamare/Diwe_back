@@ -36,7 +36,7 @@ exports.create = async (req, res) => {
         check('lastname').optional().isString().withMessage('Le nom doit être une chaîne de caractères').isLength({ min: 2, max: 30 }).withMessage('Le nom doit avoir entre 2 et 30 caractères').matches(/^[a-zA-Z\s]+$/).withMessage('Le nom ne doit contenir que des lettres et des espaces'),
 
         //Role is mandatory, must be user (patient), health (health professional) or blog (community manager)
-        check('role').notEmpty().withMessage('Le rôle est obligatoire').isIn(['user', 'sante', 'blog']).withMessage('Le rôle doit être "user", "sante" ou "blog"'),
+        check('role').notEmpty().withMessage('Le rôle est obligatoire').isIn(['user', 'health', 'blog']).withMessage('Le rôle doit être "user", "health" ou "blog"'),
 
         //Date of birth is mandatory and must be a date in the correct format
         check('birthday').notEmpty().withMessage('La date de naissance est obligatoire').isISO8601().toDate().withMessage('La date de naissance est au mauvais format'),
@@ -70,8 +70,8 @@ exports.create = async (req, res) => {
         //Store message in variable for update this if account is a doctor with with id_user null
         let message = "Utilisateur creé avec succes";
 
-        //If role is "sante", create a doctor
-        if (req.body.role === 'sante') {
+        //If role is "health", create a doctor
+        if (req.body.role === 'health') {
 
             //Check if doctor already exist
             const existingDoctor = await Doctor.findOne({ email: req.body.email });
@@ -121,8 +121,8 @@ exports.create = async (req, res) => {
 
         //If an error occurs, send an error message
         res.status(500).json({
-            message: error.message || "Une erreur s'est produite lors de la création de l'utilisateur.",
-            status : 500
+            error: error.message || "Une erreur s'est produite lors de la création de l'utilisateur.",
+            status : 401
         });
     }
 }
