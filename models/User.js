@@ -57,15 +57,12 @@ User.create = async (newUser, resulte) => {
     //Get body information
     const {email,password, firstname, lastname, role, birthday, phone, secret_pin} = newUser;
 
-    //Hash password
-    const hashedPassword = await bcrypt.hash(password,10);
-
     //Create user object
     const user = new User({
         firstname,
         lastname,
         email,
-        password : hashedPassword,
+        password,
         role,
         birthday,
         phone,
