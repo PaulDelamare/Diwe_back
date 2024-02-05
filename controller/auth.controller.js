@@ -102,7 +102,7 @@ exports.create = async (req, res) => {
     } catch (error) {
 
         //If an error occurs, send an error message
-        res.status(500).json({
+        res.status(401).json({
             error: error.message || "Une erreur s'est produite lors de la création de l'utilisateur.",
             status : 401
         });
@@ -125,7 +125,7 @@ exports.login = async (req, res) => {
         // Check for validation errors
         if (!valideBody.isEmpty()) {
             // Return a JSON response with the determined status code
-            return res.status(400).json({ errors: valideBody.array() });
+            return res.status(401).json({ errors: valideBody.array() });
         }
 
         //Get user with email
@@ -140,7 +140,7 @@ exports.login = async (req, res) => {
         // Check for validation errors
         if (!valideBody.isEmpty()) {
             // Return a JSON response with the determined status code
-            return res.status(400).json({ errors: valideBody.array() });
+            return res.status(401).json({ errors: valideBody.array() });
         }
 
         //Create jwt token
@@ -148,7 +148,7 @@ exports.login = async (req, res) => {
 
         //Response with token and status
         res.status(200).json({
-            jwt : token,
+            access_token : token,
             status : 200
         });
     } catch (error) {
