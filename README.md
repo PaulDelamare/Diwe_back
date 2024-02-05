@@ -13,7 +13,7 @@ This api is made by NodeJs and Mongo DB
 
 Run `node index`
 
-## Register
+### Register
 
 `POST auth/register`
 
@@ -47,15 +47,55 @@ Response :
     "status": string,
     "message" : string
 }
-
 ```
 
 - 401 
 
 ```json
-
 {
     "error": string
 }
-
 ```
+
+> The message depends on the error
+
+### Login
+
+`GET auth/login`
+
+Authentication:
+
+> No authentication
+
+Parameters:
+
+> No parameters
+
+Body :
+
+| Name     | Type   | Description              |
+| -------- | ------ | ------------------------ |
+| email    | string | The email of the user    |
+| password | string | The password of the user |
+
+Response :
+
+- 200
+
+```json
+{
+    "access_token": string,
+    "status":  string
+}
+```
+
+- 401
+
+```json
+{
+  "error": string,
+  "status": string
+}
+```
+
+> The message depends on the error

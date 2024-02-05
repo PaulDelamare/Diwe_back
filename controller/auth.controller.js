@@ -1,63 +1,45 @@
 //////////
 //REQUIRE
+//Import user model
 const User = require('../models/User');
+//Import doctor model
 const Doctor = require('../models/Doctor');
-const { validationResult, check } = require('express-validator');
+//Import bcrypt for hash password
 const bcrypt = require('bcryptjs');
+//Import validateBody class for have an acces to validate rules
+const ValidateBody = require('../utils/validateBody');
+//Import jwt for create token
+const jwt = require('jsonwebtoken');
 //////////
 //////////
-
 
 //////////
 //FUNCTION CONTROLLER
+
+//Create user
 exports.create = async (req, res) => {
 
     //Validation
-    const validationRules = [
-        //Email is required and must be an unique email
-        check('email').notEmpty().withMessage('L\'adresse e-mail est obligatoire').isEmail().withMessage('L\'adresse e-mail est invalide').normalizeEmail()
-        .custom(async (value) => {
-            // Check if the email already exists in the database
-            const user = await User.findOne({ email: value });
-            if (user) {
-                throw new Error('L\'adresse e-mail est déjà utilisée.');
-            }
-            return true;
-        })
-        ,
+    //Instance validateBody
+    const validateBody = new ValidateBody();
 
-        //Password must be between 6 and 20 characters, have an uppercase letter, number and special character
-        check('password').isLength({ min: 6, max: 20 }).withMessage('Le mot de passe doit avoir entre 6 et 20 caractères').matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/).withMessage('Le mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial'),
+    //Validation
+    validateBody.emailValidator('email', true, true, false);
+    validateBody.passwordValidator('password');
+    validateBody.textValidator('firstname', true, 2, 30, 'Le prénom');
+    validateBody.textValidator('lastname', false, 2, 30, 'Le nom');
+    validateBody.roleValidator('role', true);
+    validateBody.birthdateValidator('birthday', true);
+    validateBody.phoneValidator('phone', false);
+    validateBody.secretPinValidator('secret_pin', true, 6);
 
-        //First name is mandatory, must be a character string between 2 and 30 characters and only have letters
-        check('firstname').notEmpty().withMessage('Le prénom est obligatoire').isString().withMessage('Le prénom doit être une chaîne de caractères').isLength({ min: 2, max: 30 }).withMessage('Le prénom doit avoir entre 2 et 30 caractères').matches(/^[a-zA-Z\s]+$/).withMessage('Le prénom ne doit contenir que des lettres et des espaces'),
+    //Validate rules
+    const valideBody = await validateBody.validateRules(req);
 
-        //Name is not mandatory, must be a character string between 2 and 30 characters and only have letters
-        check('lastname').optional().isString().withMessage('Le nom doit être une chaîne de caractères').isLength({ min: 2, max: 30 }).withMessage('Le nom doit avoir entre 2 et 30 caractères').matches(/^[a-zA-Z\s]+$/).withMessage('Le nom ne doit contenir que des lettres et des espaces'),
-
-        //Role is mandatory, must be user (patient), health (health professional) or blog (community manager)
-        check('role').notEmpty().withMessage('Le rôle est obligatoire').isIn(['user', 'health', 'blog']).withMessage('Le rôle doit être "user", "health" ou "blog"'),
-
-        //Date of birth is mandatory and must be a date in the correct format
-        check('birthday').notEmpty().withMessage('La date de naissance est obligatoire').isISO8601().toDate().withMessage('La date de naissance est au mauvais format'),
-
-        //Phone number is not required and must be a valid phone number
-        check('phone').optional().isMobilePhone('any', {strictMode : false}).withMessage('Le numéro de téléphone doit être valide'),
-
-        //Secret code is mandatory and must be a 6-digit number
-        check('secret_pin').notEmpty().withMessage('Le code secret est obligatoire').isNumeric().withMessage('Le code secret doit être un nombre').isLength({ min: 6, max: 6 }).withMessage('Le code secret doit avoir exactement 6 chiffres')
-    ];
-
-    // Asynchronously apply all validation rules to the query fields
-    await Promise.all(validationRules.map(validationRule => validationRule.run(req)));
-
-    // Get the validation results for the query
-    const errors = validationResult(req);
-
-    // Check for validation errors
-    if (!errors.isEmpty()) {
+    //If one rule is'nt valid, return error
+    if (!valideBody.isEmpty()) {
         // If errors are present, return a JSON response with code 422 Unprocessable Entity
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({ errors: valideBody.array() });
     }
 
     try {
@@ -120,8 +102,60 @@ exports.create = async (req, res) => {
     } catch (error) {
 
         //If an error occurs, send an error message
-        res.status(500).json({
+        res.status(401).json({
             error: error.message || "Une erreur s'est produite lors de la création de l'utilisateur.",
+            status : 401
+        });
+    }
+}
+
+//Login user
+exports.login = async (req, res) => {
+    try {
+        //Validation
+        const validateBody = new ValidateBody();
+
+        //Create rules
+        await validateBody.emailValidator('email', true, false, true);
+        validateBody.passwordValidator('password');
+
+        //Check the rules with data in body
+        let valideBody = await validateBody.validateRules(req);
+
+        // Check for validation errors
+        if (!valideBody.isEmpty()) {
+            // Return a JSON response with the determined status code
+            return res.status(401).json({ errors: valideBody.array() });
+        }
+
+        //Get user with email
+        const user = await User.findOne({ email: req.body.email });
+
+        //Check if password is correct
+        validateBody.checkPassword('password', user);
+
+        //Check the rules with data in body
+        valideBody = await validateBody.validateRules(req);
+
+        // Check for validation errors
+        if (!valideBody.isEmpty()) {
+            // Return a JSON response with the determined status code
+            return res.status(401).json({ errors: valideBody.array() });
+        }
+
+        //Create jwt token
+        const token = jwt.sign({email: user.email}, process.env.JWT_SECRET);
+
+        //Response with token and status
+        res.status(200).json({
+            access_token : token,
+            status : 200
+        });
+    } catch (error) {
+
+        //If an error occurs, send an error message
+        res.status(401).json({
+            message : e.message,
             status : 401
         });
     }

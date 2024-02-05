@@ -1,6 +1,11 @@
+//////////
+//REQUIRE
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+//////////
+//////////
 
+//////////
+//SCHEMA
 const UserSchema = new mongoose.Schema({
     firstname: {
         type: String,
@@ -48,10 +53,26 @@ const UserSchema = new mongoose.Schema({
     updated_at:{
         type: Date,
         default : null
+    },
+    active:{
+        type: Boolean,
+        default: false
     }
 });
 
+//////////
+//////////
+
+//////////
+//MODEL
+
 const User = mongoose.model('User', UserSchema, 'user');
+
+//////////
+//////////
+
+//////////
+//FUNCTIONS
 
 User.create = async (newUser, resulte) => {
     //Get body information
@@ -67,11 +88,18 @@ User.create = async (newUser, resulte) => {
         birthday,
         phone,
         secret_pin,
-        created_at : new Date()
+        created_at : new Date(),
+        active : false
     });
 
     //Push in data base
     return user.save();
 }
 
+//////////
+//////////
+
+//////////
+//EXPORT
 module.exports = User;
+//////////
