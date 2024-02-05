@@ -89,7 +89,7 @@ User.create = async (newUser, resulte) => {
         phone,
         secret_pin,
         created_at : new Date(),
-        active
+        active : false
     });
 
     //Push in data base
