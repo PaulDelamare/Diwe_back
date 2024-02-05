@@ -1,22 +1,32 @@
-// Venir chercher la logique de passport pour gerez les JWT
+//////////
+//REQUIRE
+//Import user model
+const User = require('../models/User');
+//Come get passport logic to manage JWTs
 const JwtStrategy = require('passport-jwt').Strategy;
-// Venir chercher la logique d'extraction des JWT
+// Get the JWT extraction logic
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+//////////
+//////////
 
-const users = require('../routes/auth.routes').users;
-
+//////////
+//Jwt options
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET
 }
 
+//////////
+//////////
+
+//////////
+//Passport
+
 module.exports = passport => {
     passport.use(
-        new JwtStrategy(opts,(jwt_payload,done) => {
-            // si username = timmy veut ce connecte a l'espace de jimmy, le token envoyer doit comprendre un payload avec le bon username
-            const user = users.find(u => u.username === jwt_payload.username);
-
+        new JwtStrategy(opts, async(jwt_payload,done) => {
+            const user = await User.findOne({ email: jwt_payload.email });
             if(user) {
                 return done(null, user);
             }
@@ -25,3 +35,6 @@ module.exports = passport => {
         })
     )
 }
+
+//////////
+//////////
