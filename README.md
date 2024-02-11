@@ -2,7 +2,7 @@
 
 This api is made by NodeJs and Mongo DB
 
-## Insatllation
+## Installation
 
 1. Clone the repository
 2. Run `npm install`
@@ -85,6 +85,13 @@ Response :
 ```json
 {
     "access_token": string,
+    "user" : {
+        "fistname": string,
+        "lastname": string,
+        "email": string,
+        "role": string,
+        "phone": string
+    },
     "status":  string
 }
 ```
