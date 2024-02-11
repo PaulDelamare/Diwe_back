@@ -146,9 +146,18 @@ exports.login = async (req, res) => {
         //Create jwt token
         const token = jwt.sign({email: user.email}, process.env.JWT_SECRET);
 
+        console.log(user)
+
         //Response with token and status
         res.status(200).json({
             access_token : token,
+            user : {
+                firstname : user.firstname,
+                lastname : user.lastname,
+                email : user.email,
+                role : user.role,
+                phone : user.phone,
+            },
             status : 200
         });
     } catch (error) {
