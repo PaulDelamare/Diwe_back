@@ -1,6 +1,12 @@
 const passport = require('passport');
 
-exports.checkAuthAndRole = (role = "") => {
+/**
++ * Middleware function to check JWT authentication and user role.
++ *
++ * @param {string} role - The role required for access
++ * @return {function} Express middleware function
++ */
+const checkAuthAndRole = (role = "") => {
     return (req, res, next) => {
         // Check JWT authentication
         passport.authenticate('jwt', { session: false }, (err, user, info) => {
@@ -23,3 +29,5 @@ exports.checkAuthAndRole = (role = "") => {
         })(req, res, next);
     };
 };
+
+module.exports = checkAuthAndRole;
