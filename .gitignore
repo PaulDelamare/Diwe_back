@@ -31,3 +31,7 @@ node_modules/
 # IDE / Editor folders
 .idea
 .vscode
+
+# Uploads image
+
+uploads/
