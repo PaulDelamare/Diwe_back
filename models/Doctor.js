@@ -1,5 +1,13 @@
+//////////
+//REQUIRE
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+
+//////////
+//////////
+
+//////////
+//SCHEMA
 
 const DoctoSchema = new mongoose.Schema({
     id_user:{
@@ -36,7 +44,19 @@ const DoctoSchema = new mongoose.Schema({
     }
 });
 
+//////////
+//////////
+
+//////////
+//MODEL
+
 const Doctor = mongoose.model('Doctor', DoctoSchema, 'doctor');
+
+//////////
+//////////
+
+//////////
+//FUNCTIONS
 
 Doctor.create = async (newDoctor, resulte) => {
     //Get body information
@@ -57,4 +77,12 @@ Doctor.create = async (newDoctor, resulte) => {
     return doctor.save();
 }
 
+//////////
+//////////
+
+//////////
+//EXPORT
 module.exports = Doctor;
+
+//////////
+//////////

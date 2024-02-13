@@ -231,6 +231,38 @@ class ValidateBody{
         this._addValidationRule(validationRule);
     }
 
+     /**
+     * Validate an image file.
+     *
+     * @param {string} image - the key in body
+     * @param {boolean} require - whether the image is required
+     * @return {void}
+     */
+    imageValidator(image, require = false) {
+        // Create rule
+        const validationRule = check(image);
+
+        // Add basic rules for image (must be an image file)
+        validationRule.custom((value, { req }) => {
+            if (!req.file) {
+                // If image is not required and not present, consider it validated
+                if (require) {
+                    throw new Error('L\'image est obligatoire');
+                }
+                return true; 
+            }
+            // Add more mime types as needed
+            const allowedMimeTypes = ['image/jpeg', 'image/png'];
+            if (!allowedMimeTypes.includes(req.file.mimetype)) {
+                throw new Error('Le fichier doit être une image de type JPEG ou PNG');
+            }
+            return true;
+        });
+
+        // Push rules in rules array
+        this._addValidationRule(validationRule);
+    }
+
     //////////
     //////////
 
