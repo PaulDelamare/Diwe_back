@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
 
     //Validation
     validateBody.imageValidator('image', true);
-    validateBody.textValidator('text', true, 10, 255, 'Le texte');
+    validateBody.textValidator('text', true, 10, 255, 'Le texte', true);
 
     //Validate rules
     const valideBody = await validateBody.validateRules(req);
@@ -31,7 +31,7 @@ exports.create = async (req, res) => {
     //If one rule is'nt valid, return error
     if (!valideBody.isEmpty()) {
         // If errors are present, return a JSON response with code 422 Unprocessable Entity
-        return res.status(422).json({ errors: valideBody.array() });
+        return res.status(422).json({ errors: valideBody.array(), status : 422 });
     }
     try {
         //Stock in variable image 
@@ -60,9 +60,9 @@ exports.create = async (req, res) => {
     } catch (error) {
 
         //If an error occurs, send an error message
-        res.status(401).json({
+        res.status(500).json({
             error: error.message || "Une erreur s'est produite lors de la création de la popup.",
-            status : 401
+            status : 500
         });
     }
 }

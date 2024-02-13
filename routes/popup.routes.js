@@ -8,8 +8,7 @@ const upload = multer().single('image');
 //Import controller
 const PopupController = require('../controller/popup.controller');
 //Importfunction for check role
-const checkRole = require ('../utils/validateRole');
-
+const checkConnection = require ('../utils/validateRole');
 //////////
 //////////
 
@@ -17,7 +16,7 @@ const checkRole = require ('../utils/validateRole');
 //API ROUTES
 
 //Route create new popup
-router.post('/new-daily-popup', checkRole.checkAuthAndRole('blog'), upload, PopupController.create);
+router.post('/new-daily-popup', checkConnection('blog'), upload, PopupController.create);
 
 //////////
 //////////

@@ -26,14 +26,20 @@ class ValidateBody{
 +     * @param {number} min - the minimum length of the text
 +     * @param {number} max - the maximum length of the text
 +     * @param {string} traduction - the translation of the text for error messages
++     * @param {boolean} punctuation - if the text can have punctuation or not
 +     * @return {void} 
 +     */
-    textValidator(text, require, min, max, traduction){
+    textValidator(text, require, min, max, traduction, punctuation = false) {
         //Create rule
         const validationRule = check(text);
 
+        let regex = /^[a-zA-ZÀ-ÿ\s]+$/;
+        if (punctuation) {
+            regex = /^[a-zA-ZÀ-ÿ\s.,;!?'+-]+$/;
+        }
+
         //Add basic rules for text (Must be a regulated size string with only letters)
-        validationRule.isString().withMessage(`${traduction} doit être une chaîne de caractères`).isLength({ min: min, max: max }).withMessage(`${traduction} doit avoir entre ${min} et ${max} caractères`).matches(/^[a-zA-Z\s]+$/).withMessage(`${traduction} ne doit contenir que des lettres et des espaces`);
+        validationRule.isString().withMessage(`${traduction} doit être une chaîne de caractères`).isLength({ min: min, max: max }).withMessage(`${traduction} doit avoir entre ${min} et ${max} caractères`).matches(regex).withMessage(`${traduction} ne doit contenir que des lettres, des espaces et de la ponctuation`);
 
         //Add conditionnal rules (require or not)
         if (require) {

@@ -39,7 +39,7 @@ exports.create = async (req, res) => {
     //If one rule is'nt valid, return error
     if (!valideBody.isEmpty()) {
         // If errors are present, return a JSON response with code 422 Unprocessable Entity
-        return res.status(422).json({ errors: valideBody.array() });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
 
     try {
@@ -102,9 +102,9 @@ exports.create = async (req, res) => {
     } catch (error) {
 
         //If an error occurs, send an error message
-        res.status(401).json({
+        res.status(500).json({
             error: error.message || "Une erreur s'est produite lors de la création de l'utilisateur.",
-            status : 401
+            status : 500
         });
     }
 }
@@ -125,7 +125,7 @@ exports.login = async (req, res) => {
         // Check for validation errors
         if (!valideBody.isEmpty()) {
             // Return a JSON response with the determined status code
-            return res.status(401).json({ errors: valideBody.array() });
+            return res.status(422).json({ errors: valideBody.array(), status: 422 });
         }
 
         //Get user with email
@@ -140,7 +140,7 @@ exports.login = async (req, res) => {
         // Check for validation errors
         if (!valideBody.isEmpty()) {
             // Return a JSON response with the determined status code
-            return res.status(401).json({ errors: valideBody.array() });
+            return res.status(401).json({ errors: valideBody.array(), status: 401 });
         }
 
         //Create jwt token
@@ -161,9 +161,9 @@ exports.login = async (req, res) => {
     } catch (error) {
 
         //If an error occurs, send an error message
-        res.status(401).json({
-            message : e.message,
-            status : 401
+        res.status(500).json({
+            message : error.message,
+            status : 500
         });
     }
 }
