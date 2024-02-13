@@ -2,11 +2,13 @@
 //VARIABLE AND REQUIRE
 const express = require('express');
 const router = express.Router();
-
-const PopupController = require('../controller/popup.controller');
-
+//For receive information from form data
 const multer  = require('multer');
 const upload = multer().single('image');
+//Import controller
+const PopupController = require('../controller/popup.controller');
+//Importfunction for check role
+const checkRole = require ('../utils/validateRole');
 
 //////////
 //////////
@@ -15,13 +17,13 @@ const upload = multer().single('image');
 //API ROUTES
 
 //Route create new popup
-router.get('/new-daily-popup', upload , PopupController.create);
+router.post('/new-daily-popup', checkRole.checkAuthAndRole('blog'), upload, PopupController.create);
 
 //////////
 //////////
 
 //////////
-//Export router and users
+//Export router
 module.exports = router;
 //////////
 //////////
