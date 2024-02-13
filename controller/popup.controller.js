@@ -1,6 +1,6 @@
 //////////
 //REQUIRE
-//Import user model
+//Import popup model
 const Popup = require('../models/Popup');
 //Import validateBody class for have an acces to validate rules
 const ValidateBody = require('../utils/validateBody');
@@ -14,7 +14,7 @@ const path = require('path');
 //////////
 //FUNCTION CONTROLLER
 
-//Create user
+//Create popup
 exports.create = async (req, res) => {
 
     //Validation
@@ -61,7 +61,7 @@ exports.create = async (req, res) => {
 
         //If an error occurs, send an error message
         res.status(401).json({
-            error: error.message || "Une erreur s'est produite lors de la création de l'utilisateur.",
+            error: error.message || "Une erreur s'est produite lors de la création de la popup.",
             status : 401
         });
     }

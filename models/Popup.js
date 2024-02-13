@@ -35,7 +35,7 @@ Popup.create = async (newPopup, resulte) => {
     //Get body information
     const {image_path, text} = newPopup;
 
-    //Create user object
+    //Create popup object
     const daily_popup = new Popup({
         image_path,
         text,
