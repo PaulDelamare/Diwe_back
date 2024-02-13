@@ -15,6 +15,21 @@ Run `node index`
 
 ## Authentication
 
+- The jwt token can be requested for authentication and the role can be verified
+
+> if an error occurs :
+
+- 401/403/500
+
+```json
+{
+    "error": string,
+    "status": number
+}
+```
+
+> If the check is completed correctly, returns nothing but performs the request
+
 ### Register
 
 `POST auth/register`
@@ -51,7 +66,7 @@ Response :
 }
 ```
 
-- 401 
+- 422/500
 
 ```json
 {
@@ -99,7 +114,7 @@ Response :
 }
 ```
 
-- 401
+- 401/422/500
 
 ```json
 {
@@ -108,7 +123,63 @@ Response :
 }
 ```
 
-> The message depends on the error
+> The message and the status depends on the error
+
+## User
+
+### Check last user connection
+
+`GET user/last-connection`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response : 
+
+- 200
+
+> First connection of the day
+
+```json
+{
+    "popup": {
+        "image_path": string,
+        "text": string,
+    },
+    "status": number
+}
+```
+
+- 200
+
+> There has already been a connection during the day
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 404/500
+
+```json
+{
+    "error": string,
+    "status": number
+}
+```
+
+> The message and the status error depends on the error
 
 ## Popup
 
@@ -122,7 +193,7 @@ Authentication :
 
 Parameters :
 
-> no parameters
+> No parameters
 
 Body :
 
@@ -144,7 +215,7 @@ Response :
 }
 ```
 
-- 401
+- 422/500
 
 ```json
 {
