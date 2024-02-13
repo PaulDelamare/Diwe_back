@@ -13,15 +13,17 @@ This api is made by NodeJs and Mongo DB
 
 Run `node index`
 
+## Authentication
+
 ### Register
 
 `POST auth/register`
 
-Authentication:
+Authentication :
 
 > No authentication
 
-Parameters:
+Parameters :
 
 > No parameters
 
@@ -44,7 +46,7 @@ Response :
 
 ```json
 {
-    "status": string,
+    "status": number,
     "message" : string
 }
 ```
@@ -53,7 +55,8 @@ Response :
 
 ```json
 {
-    "error": string
+    "error": string,
+    "status": number
 }
 ```
 
@@ -63,7 +66,7 @@ Response :
 
 `GET auth/login`
 
-Authentication:
+Authentication :
 
 > No authentication
 
@@ -92,7 +95,7 @@ Response :
         "role": string,
         "phone": string
     },
-    "status":  string
+    "status":  number
 }
 ```
 
@@ -101,8 +104,53 @@ Response :
 ```json
 {
   "error": string,
-  "status": string
+  "status": number
 }
 ```
 
 > The message depends on the error
+
+## Popup
+
+### Create Daily popup
+
+`POST new-daily-popup`
+
+Authentication :
+
+> Jwt token require and only blog role can use it
+
+Parameters :
+
+> no parameters
+
+Body :
+
+- Data must be sent as FormData.
+
+| Name  | Type   | Description       |
+| ----- | ------ | ----------------- |
+| text  | string | The text on popup |
+| image | string | The popup image   |
+
+Response : 
+
+- 201
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 401
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
