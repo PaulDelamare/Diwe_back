@@ -59,6 +59,14 @@ exports.checkLastConnection = async (req, res) => {
 };
 
 //UPDATE PROFILE PICTURE
+
+/**
++ * Updates the user's profile picture.
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Object} JSON response with the status code and message
++ */
 exports.updateProfilePicture = async (req, res) => {
 
     // Get user who execute the request
