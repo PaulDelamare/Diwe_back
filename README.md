@@ -181,6 +181,48 @@ Response :
 
 > The message and the status error depends on the error
 
+### Update profile picture
+
+`POST user/update-profile-picture`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+- Data must be sent as FormData.
+
+| Name  | Type | Description             |
+| ----- | ---- | ----------------------- |
+| image | file | The new profile picture |
+
+Response :
+
+- 200 
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
@@ -202,7 +244,7 @@ Body :
 | Name  | Type   | Description       |
 | ----- | ------ | ----------------- |
 | text  | string | The text on popup |
-| image | string | The popup image   |
+| image | file | The popup image   |
 
 Response : 
 

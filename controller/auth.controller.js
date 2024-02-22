@@ -16,7 +16,13 @@ const jwt = require('jsonwebtoken');
 //////////
 //FUNCTION CONTROLLER
 
-//Create user
+//CREATE USER
+/**
++ *
++ * @param {Object} req - The request object containing user data
++ * @param {Object} res - The response object for sending the response
++ * @return {Object} JSON response with the status and message
++ */
 exports.create = async (req, res) => {
 
     //Validation
@@ -109,25 +115,32 @@ exports.create = async (req, res) => {
     }
 }
 
-//Login user
+//LOGIN USER
+/**
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Object} JSON response with the access token and user information
++ */
 exports.login = async (req, res) => {
+    
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Create rules
+    validateBody.emailValidator('email', true, false, true);
+    validateBody.passwordValidator('password');
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
     try {
-        //Validation
-        const validateBody = new ValidateBody();
-
-        //Create rules
-        await validateBody.emailValidator('email', true, false, true);
-        validateBody.passwordValidator('password');
-
-        //Check the rules with data in body
-        let valideBody = await validateBody.validateRules(req);
-
-        // Check for validation errors
-        if (!valideBody.isEmpty()) {
-            // Return a JSON response with the determined status code
-            return res.status(422).json({ errors: valideBody.array(), status: 422 });
-        }
-
         //Get user with email
         const user = await User.findOne({ email: req.body.email });
 
