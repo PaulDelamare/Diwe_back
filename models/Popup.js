@@ -31,6 +31,13 @@ const Popup = mongoose.model('Popup', PopupSchema, 'daily_popup');
 //////////
 //FUNCTIONS
 
+/**
++ * Create a new popup and save it in the database.
++ *
++ * @param {Object} newPopup - The new popup object containing image_path and text
++ * @param {Object} resulte - The resulte object
++ * @return {Promise} A promise that resolves to the saved daily_popup object
++ */
 Popup.create = async (newPopup, resulte) => {
     //Get body information
     const {image_path, text} = newPopup;
