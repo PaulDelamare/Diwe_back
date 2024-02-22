@@ -45,6 +45,10 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default : null
     },
+    profile_picture:{
+        type: String,
+        default : ''
+    },
     created_at:{
         type: Date,
         required: true,
