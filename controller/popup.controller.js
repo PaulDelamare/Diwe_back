@@ -14,7 +14,13 @@ const path = require('path');
 //////////
 //FUNCTION CONTROLLER
 
-//Create popup
+//CREATE POPUP
+/**
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Object} JSON response with success or error message
++ */
 exports.create = async (req, res) => {
 
     //Validation
