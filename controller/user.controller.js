@@ -10,6 +10,8 @@ const ValidateBody = require('../utils/validateBody');
 const fs = require('fs');
 //Require path
 const path = require('path');
+//Import bcrypt for hash password
+const bcrypt = require('bcryptjs');
 
 //////////
 //////////
@@ -61,7 +63,6 @@ exports.checkLastConnection = async (req, res) => {
 //UPDATE PROFILE PICTURE
 
 /**
-+ * Updates the user's profile picture.
 + *
 + * @param {Object} req - the request object
 + * @param {Object} res - the response object
@@ -129,6 +130,69 @@ exports.updateProfilePicture = async (req, res) => {
     }catch(e){
         console.error('Error in updateProfilePicture:', e);
         return res.status(500).json({ error: 'Une erreur s\'est produite lors de la mise à jour de la photo de profil.', status : 500 });
+    }
+}
+
+
+//CHANGE USER PASSWORD
+/**
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Promise} a JSON response with the determined status code
++ */
+exports.changePassword = async (req, res) => {
+
+    // Get user who execute the request
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Create rules
+    validateBody.passwordValidator('password');
+    validateBody.passwordValidator('newPassword');
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    //Check if password is correct
+    validateBody.checkPassword('password', user);
+
+    //Check the rules with data in body
+    valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+    try {
+
+        // Hach the new password
+        const hashedNewPassword = await bcrypt.hash(req.body.newPassword, 10);
+
+        // Update the password
+        user.password = hashedNewPassword;
+        await user.save();
+
+        // Return succes 
+        return res.status(200).json({ message: 'Mot de passe changé avec succès.', status: 200 });
+
+    }catch(e){
+        console.error('Error in changePassword:', e);
+        return res.status(500).json({ error: 'Une erreur s\'est produite lors de la modification du mot de passe.', status : 500 });
     }
 }
 

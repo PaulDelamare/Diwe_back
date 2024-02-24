@@ -127,6 +127,49 @@ Response :
 
 ## User
 
+### Update user password
+
+`PUT user/change-password`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+- Data must be sent as FormData.
+
+| Name        | Type   | Description           |
+| ----------- | ------ | --------------------- |
+| password    | string | The user password     |
+| newPassword | string | The new user password |
+
+Response :
+
+- 200 
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 401/404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ### Check last user connection
 
 `GET user/last-connection`
