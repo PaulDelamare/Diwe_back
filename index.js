@@ -9,6 +9,7 @@ const cors = require('cors');
 const AuthRoute = require('./routes/auth.routes');
 const PopupRoute = require('./routes/popup.routes');
 const UserRoute = require('./routes/user.routes');
+const cronTask = require('./tasks/cleanupUser');
 
 //
 //////////
@@ -57,6 +58,14 @@ app.use(passport.initialize());
 app.use('/api', AuthRoute);
 app.use('/api', PopupRoute);
 app.use('/api', UserRoute);
+
+//////////
+//////////
+
+//////////
+//CRON TASK
+
+cronTask();
 
 //////////
 //////////
