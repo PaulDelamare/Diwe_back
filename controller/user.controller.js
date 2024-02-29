@@ -196,6 +196,13 @@ exports.changePassword = async (req, res) => {
     }
 }
 
+//CHANGE USER EMAIL
+/**
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @return {Object} JSON response with the determined status code
+ */
 exports.changeEmail = async (req, res) => {
     const user = await User.findById(req.user._id);
 
