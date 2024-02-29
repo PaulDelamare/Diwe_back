@@ -185,7 +185,7 @@ exports.changePassword = async (req, res) => {
 
         // Update the password
         user.password = hashedNewPassword;
-        await user.save();
+        // await user.save();
 
         // Return succes 
         return res.status(200).json({ message: 'Mot de passe changé avec succès.', status: 200 });
@@ -193,6 +193,52 @@ exports.changePassword = async (req, res) => {
     }catch(e){
         console.error('Error in changePassword:', e);
         return res.status(500).json({ error: 'Une erreur s\'est produite lors de la modification du mot de passe.', status : 500 });
+    }
+}
+
+exports.changeEmail = async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Create rules
+    validateBody.passwordValidator('password');
+    validateBody.emailValidator('email', true, true, false);
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    //Check if password is correct
+    validateBody.checkPassword('password', user);
+
+    //Check the rules with data in body
+    valideBody = await validateBody.validateRules(req);
+
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+    try{
+        //If all is correct, update email
+        await User.findByIdAndUpdate(req.user._id, { email: req.body.email });
+
+        //Return message if success
+        return res.status(200).json({ message: 'Adresse e-mail mise à jour avec succès.', status: 200, "reconnect_required": true });
+    }catch(e){
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de l\'adresse e-mail.', status: 500 });
     }
 }
 
