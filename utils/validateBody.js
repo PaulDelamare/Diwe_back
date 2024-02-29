@@ -168,7 +168,7 @@ class ValidateBody{
 +     * Validate a phone number and add validation rule.
 +     *
 +     * @param {string} phone - the key in body
-+     * @param {boolean} require - is require in body or not
++     * @param {boolean} require - is require in body or not (base = false)
 +     * @return {void}
 +     */
     phoneValidator(phone, require = false){
