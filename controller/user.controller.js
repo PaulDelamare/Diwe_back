@@ -133,6 +133,55 @@ exports.updateProfilePicture = async (req, res) => {
     }
 }
 
+exports.changeInformation = async (req, res) => {
+    // Get user who execute the request
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Create rules
+    validateBody.textValidator('firstname', true, 2, 30, 'Le prénom', false);
+    validateBody.textValidator('lastname', true, 2, 30, 'Le nom', false);
+    validateBody.birthdateValidator('birthdate', true);
+    validateBody.phoneValidator('phone', false);
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+    try{
+        
+        // Update user information in the database with the new data
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: req.user._id },
+            {
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                birthdate: req.body.birthdate,
+                phone: req.body.phone
+            },
+            { new: true, select: 'firstname lastname birthdate phone' }
+        );
+
+        // Return a JSON response with the determined status code and the updated user data
+        return res.status(200).json({ message: 'Informations utilisateur mises à jour avec succès.', status: 200, user: updatedUser });
+    }catch(e){
+        // If an error occurs, return a response with the status code 500
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour des informations utilisateur.', status: 500 });
+    }
+    
+}
+
 
 //CHANGE USER PASSWORD
 /**
@@ -183,9 +232,12 @@ exports.changePassword = async (req, res) => {
         // Hach the new password
         const hashedNewPassword = await bcrypt.hash(req.body.newPassword, 10);
 
-        // Update the password
-        user.password = hashedNewPassword;
-        await user.save();
+        //Update user password
+        await User.findOneAndUpdate(
+            { _id: req.user._id },
+            { password: hashedNewPassword },
+            { new: true }
+        );
 
         // Return succes 
         return res.status(200).json({ message: 'Mot de passe changé avec succès.', status: 200 });
