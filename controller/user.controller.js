@@ -133,6 +133,13 @@ exports.updateProfilePicture = async (req, res) => {
     }
 }
 
+//CHANGE INFORMATION
+/**
+ *
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @return {Object} JSON response with the determined status code and the updated user data
+ */
 exports.changeInformation = async (req, res) => {
     // Get user who execute the request
     const user = await User.findById(req.user._id);
