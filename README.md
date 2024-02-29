@@ -129,7 +129,7 @@ Response :
 
 ### Update user password
 
-`PUT user/change-password`
+`PUT user/update-password`
 
 Authentication :
 
@@ -158,6 +158,52 @@ Response :
     "status": number
 }
 ```
+
+- 401/404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Update user email
+
+`PUT user/update-email`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+- Data must be sent as FormData.
+
+| Name        | Type   | Description           |
+| ----------- | ------ | --------------------- |
+| password    | string | The user password     |
+| email       | string | The new user email    |
+
+Response :
+
+- 200 
+
+```json
+{
+    "message": string,
+    "status": number,
+    "reconnect_required": boolean
+}
+```
+
+> The succes of this operation **need the reconnection og the user**
 
 - 401/404/422/500
 
