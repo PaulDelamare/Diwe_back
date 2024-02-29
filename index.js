@@ -4,6 +4,7 @@
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
+const helmet = require('helmet');
 
 //Require route
 const AuthRoute = require('./routes/auth.routes');
@@ -37,6 +38,7 @@ require('./config/passport-config')(passport);
 // };
 
 app.use(cors());
+app.use(helmet());
 
 //Specify that the api will be in json
 app.use(express.json());
