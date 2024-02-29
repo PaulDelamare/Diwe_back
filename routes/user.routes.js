@@ -20,6 +20,8 @@ const checkConnection = require ('../utils/validateRole');
 router.get('/user/last-connection', checkConnection(), UserController.checkLastConnection);
 //Route update profile picture
 router.post('/user/update-profile-picture', checkConnection(), upload, UserController.updateProfilePicture);
+//Route update profile picture
+router.put('/user/update-information', checkConnection(), UserController.changeInformation);
 //Change password
 router.put('/user/update-password', checkConnection(), UserController.changePassword);
 //Change email
