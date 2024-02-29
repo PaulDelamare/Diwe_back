@@ -312,6 +312,56 @@ Response :
 
 > The message and the status error depends on the error
 
+### Update information
+
+`PUT user/update-information`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+
+| Name      | Type   | Description                       |
+| --------- | ------ | --------------------------------- |
+| firstname | string | The user firstname                |
+| lastname  | string | The user lastname                 |
+| birthdate | Date   | The user birthdate                |
+| phone     | string | The user phone number (optionnal) |
+
+Response :
+
+- 200 
+
+```json
+{
+    "message": string,
+    "status": number,
+    "user" : {
+        "fistname": string,
+        "lastname": string,
+        "birthdate": string,
+        "phone": string
+    },
+}
+```
+
+- 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
