@@ -21,7 +21,9 @@ router.get('/user/last-connection', checkConnection(), UserController.checkLastC
 //Route update profile picture
 router.post('/user/update-profile-picture', checkConnection(), upload, UserController.updateProfilePicture);
 //Change password
-router.put('/user/change-password', checkConnection(), UserController.changePassword);
+router.put('/user/update-password', checkConnection(), UserController.changePassword);
+//Change email
+router.put('/user/update-email', checkConnection(), UserController.changeEmail);
 
 //////////
 //////////
