@@ -68,7 +68,10 @@ app.use('/api', UserRoute);
 //////////
 //CRON TASK
 
+//Delete account when the count is not activated for more than two weeks
 cronTask();
+
+//Remove personnal information for users who have requested deletion more than 30 days ago.
 deleteUserTask();
 
 //////////
