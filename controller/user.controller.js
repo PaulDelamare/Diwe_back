@@ -122,7 +122,7 @@ exports.updateProfilePicture = async (req, res) => {
         fs.writeFileSync(imageFilePath, uploadedImage.buffer);
 
         //Update user profile picture
-        await User.findByIdAndUpdate(user._id, { profile_picture: imageFilePath });
+        await User.findByIdAndUpdate(user._id, { profile_picture: imageFilePath, updated_at: Date.now() }, { new: true });
         
         //Return message if success
         return res.status(200).json({ message: 'La photo de profil a correctement été enregistré', status: 200 });
@@ -175,7 +175,8 @@ exports.changeInformation = async (req, res) => {
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 birthdate: req.body.birthdate,
-                phone: req.body.phone
+                phone: req.body.phone,
+                updated_at: Date.now()
             },
             { new: true, select: 'firstname lastname birthdate phone' }
         );
@@ -242,7 +243,7 @@ exports.changePassword = async (req, res) => {
         //Update user password
         await User.findOneAndUpdate(
             { _id: req.user._id },
-            { password: hashedNewPassword },
+            { password: hashedNewPassword, updated_at: Date.now() },
             { new: true }
         );
 
@@ -298,7 +299,7 @@ exports.changeEmail = async (req, res) => {
     }
     try{
         //If all is correct, update email
-        await User.findByIdAndUpdate(req.user._id, { email: req.body.email });
+        await User.findByIdAndUpdate(req.user._id, { email: req.body.email, updated_at: Date.now() });
 
         //Return message if success
         return res.status(200).json({ message: 'Adresse e-mail mise à jour avec succès.', status: 200, "reconnect_required": true });
@@ -306,6 +307,35 @@ exports.changeEmail = async (req, res) => {
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de l\'adresse e-mail.', status: 500 });
     }
+}
+
+//CANCEL DELETE USER
+
+/**
++ * Request deletion for the user with the given user ID in the request (JWT).
++ *
++ * @param {Object} req - The request object
++ * @param {Object} res - The response object
++ * @return {Promise} A Promise that resolves to the result of the deletion request
++ */
+exports.requestDeletion = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+    try{
+        //If all is correct, update request_deletion
+        await User.findByIdAndUpdate(req.user._id, { request_deletion: user.request_deletion == null ? Date.now() : null, updated_at: Date.now() });
+
+        //If all is correct, return message
+        return res.status(200).json({ message: `Demande de suppression ${user.request_deletion == null ? 'envoyée avec succès.' : 'annulé'}`, status: 200 });
+    }catch(e){
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de suppression du compte', status: 500 });
+    }  
 }
 
 //////////
