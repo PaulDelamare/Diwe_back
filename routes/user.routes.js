@@ -26,6 +26,8 @@ router.put('/user/update-information', checkConnection(), UserController.changeI
 router.put('/user/update-password', checkConnection(), UserController.changePassword);
 //Change email
 router.put('/user/update-email', checkConnection(), UserController.changeEmail);
+//Request deletion
+router.put('/user/request-deletion', checkConnection(), UserController.requestDeletion);
 
 //////////
 //////////
