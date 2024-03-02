@@ -11,6 +11,7 @@ const AuthRoute = require('./routes/auth.routes');
 const PopupRoute = require('./routes/popup.routes');
 const UserRoute = require('./routes/user.routes');
 const cronTask = require('./tasks/cleanupUser');
+const deleteUserTask = require('./tasks/deleteUser');
 
 //
 //////////
@@ -68,6 +69,7 @@ app.use('/api', UserRoute);
 //CRON TASK
 
 cronTask();
+deleteUserTask();
 
 //////////
 //////////
