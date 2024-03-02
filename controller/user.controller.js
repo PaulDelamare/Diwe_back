@@ -190,7 +190,6 @@ exports.changeInformation = async (req, res) => {
     
 }
 
-
 //CHANGE USER PASSWORD
 /**
 + *
