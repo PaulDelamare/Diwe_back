@@ -11,6 +11,7 @@ const AuthRoute = require('./routes/auth.routes');
 const PopupRoute = require('./routes/popup.routes');
 const UserRoute = require('./routes/user.routes');
 const cronTask = require('./tasks/cleanupUser');
+const deleteUserTask = require('./tasks/deleteUser');
 
 //
 //////////
@@ -67,7 +68,11 @@ app.use('/api', UserRoute);
 //////////
 //CRON TASK
 
+//Delete account when the count is not activated for more than two weeks
 cronTask();
+
+//Remove personnal information for users who have requested deletion more than 30 days ago.
+deleteUserTask();
 
 //////////
 //////////

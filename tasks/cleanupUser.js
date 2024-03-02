@@ -1,6 +1,12 @@
 const cron = require('node-cron');
 const User = require('../models/User');
 
+/**
++ * Cleanup old inactive user accounts by deleting users created two weeks ago and not active.
++ *
++ * @param {None} None
++ * @return {None} None
++ */
 function cleanupTask() {
     // Task is execute every day at midnight
     cron.schedule('0 0 * * *', async () => {

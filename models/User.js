@@ -61,6 +61,10 @@ const UserSchema = new mongoose.Schema({
     active:{
         type: Boolean,
         default: false
+    },
+    request_deletion:{
+        type: Date,
+        default : null
     }
 });
 

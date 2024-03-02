@@ -362,6 +362,46 @@ Response :
 
 > The message and the status error depends on the error
 
+### Request deletion
+
+`PUT user/request-deletion`
+
+> This request is used to request deletion or cancel the request, if there is already a date to enter in the deletion request, in this case reusing this request will cancel the previous request
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response :
+
+- 200 
+
+```json
+{
+    "message": string,
+    "status": number,
+}
+```
+
+- 404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
