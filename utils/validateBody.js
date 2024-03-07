@@ -269,6 +269,23 @@ class ValidateBody{
         this._addValidationRule(validationRule);
     }
 
+    linkCodeValidator(link_code, require = false) {
+        // Create rule
+        const validationRule = check(link_code);
+
+        // Link code must be a number
+        validationRule.isNumeric().withMessage('Le code de liaison doit être un nombre').isLength({ min: 10, max: 10 }).withMessage('Le code de liaison doit avoir exactement 10 chiffres');
+
+         // Add conditionnal rules (require or not)
+         if (require) {
+            validationRule.notEmpty().withMessage('Le code de liaison est obligatoire');
+        }
+
+         // Push rules in rules array
+        this._addValidationRule(validationRule);
+
+    }
+
     //////////
     //////////
 
