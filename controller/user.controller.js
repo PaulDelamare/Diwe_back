@@ -12,6 +12,8 @@ const fs = require('fs');
 const path = require('path');
 //Import bcrypt for hash password
 const bcrypt = require('bcryptjs');
+const RequestLink = require('../models/RequestLink');
+const Doctor = require('../models/Doctor');
 
 //////////
 //////////
@@ -334,6 +336,56 @@ exports.requestDeletion = async (req, res) => {
     }catch(e){
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de suppression du compte', status: 500 });
+    }  
+}
+
+/**
++ * Request link to doctor with the given link_code in the request (JWT). Stock in colletion the request
++ *
++ * @param {Object} req - The request object
++ * @param {Object} res - The response object
++ * @return {Promise} A Promise that resolves to the result of the deletion request
++ */
+exports.requestLink = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Check if password is correct
+    validateBody.linkCodeValidator('link_code', true);
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+
+    // Find Doctor who have the same link_code
+    const doctor = await Doctor.findOne({ binding_code: req.body.link_code });
+
+    // If the dotcor does not exist, return an error
+    if (!doctor) {
+        return res.status(404).json({ error: 'Spécialiste de santé non trouvé.', status : 404 });
+    }
+
+    try{
+        //If all is correct create request
+        await RequestLink.create({ id_user: user._id, id_doctor: doctor._id });
+
+        //If all is correct, return message
+        return res.status(201).json({ message: `Votre demande de liaison de compte a bien été enregistré`, status: 201 });
+    }catch(e){
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de liaison de compte', status: 500 });
     }  
 }
 
