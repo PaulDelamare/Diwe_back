@@ -27,6 +27,7 @@ const UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
+        enum: ['user', 'blog', 'health'],
         required: true
     },
     birthday:{
