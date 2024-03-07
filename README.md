@@ -326,7 +326,6 @@ Parameters :
 
 Body :
 
-
 | Name      | Type   | Description                       |
 | --------- | ------ | --------------------------------- |
 | firstname | string | The user firstname                |
@@ -392,6 +391,46 @@ Response :
 ```
 
 - 404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Request link to doctor
+
+`POST user/request-link`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+| Name      | Type   | Description        |
+| --------- | ------ | ------------------ |
+| link_code | string | The user firstname |
+
+Response :
+
+- 201
+
+```json
+{
+    "message": string,
+    "status": number,
+}
+```
+
+- 401/404/500
 
 ```json
 {
