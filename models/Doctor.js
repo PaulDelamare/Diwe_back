@@ -11,7 +11,7 @@ const bcrypt = require('bcryptjs');
 
 const DoctoSchema = new mongoose.Schema({
     id_user:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         default: null
     },
     firstname: {
