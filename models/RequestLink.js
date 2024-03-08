@@ -8,12 +8,13 @@ const mongoose = require('mongoose');
 //SCHEMA
 const RequestLinkSchema = new mongoose.Schema({
     id_user: {
-        type: String,
+        type:  mongoose.Schema.Types.ObjectId,
         required: true,
     },
     id_doctor: {
-        type : String,
-        required: true
+        type :  mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'doctor'
     },
     status: {
         type: String,
