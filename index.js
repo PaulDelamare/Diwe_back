@@ -10,8 +10,14 @@ const helmet = require('helmet');
 const AuthRoute = require('./routes/auth.routes');
 const PopupRoute = require('./routes/popup.routes');
 const UserRoute = require('./routes/user.routes');
+
+
+//Require Task
 const cronTask = require('./tasks/cleanupUser');
 const deleteUserTask = require('./tasks/deleteUser');
+
+//Require Function
+const checkApiKey = require('./utils/checkApiKey');
 
 //
 //////////
@@ -32,13 +38,17 @@ require('./config/passport-config')(passport);
 //////////
 //CONFIG API
 
+//Check if the api key exist
+app.use(checkApiKey);
+
 //Removes cors problems
+app.use(cors());
 // const corsOptions = {
 //     origin: 'web site link',
 //     optionsSuccessStatus: 200,
 // };
 
-app.use(cors());
+//Helmet for safety, define safe header
 app.use(helmet());
 
 //Specify that the api will be in json
