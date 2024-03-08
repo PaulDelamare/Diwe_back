@@ -13,6 +13,10 @@ This api is made by NodeJs and Mongo DB
 
 Run `node index`
 
+## Header
+
+- Don't forget to add the api key in x-api-key for all routes
+
 ## Authentication
 
 - The jwt token can be requested for authentication and the role can be verified
