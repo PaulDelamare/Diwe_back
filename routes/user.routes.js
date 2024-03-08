@@ -30,6 +30,8 @@ router.put('/user/update-email', checkConnection(), UserController.changeEmail);
 router.put('/user/request-deletion', checkConnection(), UserController.requestDeletion);
 //Request link
 router.post('/user/request-link', checkConnection('user'), UserController.requestLink);
+//Request link
+router.get('/user/request', checkConnection('user'), UserController.findRequestLinkUser);
 
 //////////
 //////////

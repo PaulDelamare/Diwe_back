@@ -430,7 +430,58 @@ Response :
 }
 ```
 
-- 401/404/500
+- 401/404/409/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Request get request link to doctor
+
+`GET user/request`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response :
+
+- 200
+
+```json
+{
+    "requests": [
+        {
+            "status": string,
+            "created_at": Date,
+            "doctor": [
+                {
+                    "fistname": string,
+                    "lastname": string,
+                    "email": string,
+                    "phone": string,
+                }
+            ]
+        }
+    ],
+    "status": number,
+}
+```
+
+- 401/404/409/500
 
 ```json
 {
