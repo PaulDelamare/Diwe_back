@@ -377,6 +377,12 @@ exports.requestLink = async (req, res) => {
         return res.status(404).json({ error: 'Spécialiste de santé non trouvé.', status : 404 });
     }
 
+    const allReadyExist =  await RequestLink.findOne({ id_user: user._id, id_doctor: doctor._id });
+
+    if(allReadyExist){
+        return res.status(409).json({ error: 'Vous avez déjà envoyé une demande de liaison de compte.', status : 409 });
+    }
+
     try{
         //If all is correct create request
         await RequestLink.create({ id_user: user._id, id_doctor: doctor._id });
@@ -387,6 +393,65 @@ exports.requestLink = async (req, res) => {
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de liaison de compte', status: 500 });
     }  
+}
+
+exports.findRequestLinkUser = async (req, res) => {
+
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    try{
+
+        //Find all requests for user with id_user
+        const requestsWithDoctors = await RequestLink.aggregate([
+            {
+                // FInd all requests for user
+                $match: { id_user: user._id }
+            },
+            {
+                // Find doctor linked to the id_doctor
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'id_doctor',
+                    foreignField: '_id',
+                    as: 'doctor',
+                    // Find only doctor data that we need
+                    pipeline: [
+                        {
+                          $project: {
+                            _id: 0,
+                            lastname: 1,
+                            firstname: 1,
+                            email: 1,
+                            phone: 1
+                          }
+                        }
+                      ]
+                }
+            },
+            {
+                // Select data that we need in the result
+                $project: {
+                    _id: 0,
+                    status: 1,
+                    created_at: 1,
+                    doctor:1
+                }
+            }
+        ]);
+
+        //If succes, return requests or empty
+        return res.status(200).json({ requests: requestsWithDoctors, status:200 });
+    }catch(e){
+
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des requêtes.', status: 500 });
+    }
 }
 
 //////////
