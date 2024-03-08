@@ -395,6 +395,14 @@ exports.requestLink = async (req, res) => {
     }  
 }
 
+
+/**
++ * Get request link doctor in function of user
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Promise} a Promise that resolves to the result of the function
++ */
 exports.findRequestLinkUser = async (req, res) => {
 
     //Find user last information with the id user in req (jwt)
