@@ -177,7 +177,7 @@ exports.validateRequestLink = async (req, res) => {
 + * @param {Object} res - The response object
 + * @return {Promise} The result of the doctor information retrieval
 + */
-exports.getDoctorLink = async (req, res) => {
+exports.getUsersLink = async (req, res) => {
 
     //Find user last information with the id user in req (jwt)
     const user = await User.findById(req.user._id);
@@ -187,18 +187,19 @@ exports.getDoctorLink = async (req, res) => {
         return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
     }
 
+    // Get doctor information
     const doctor = await Doctor.findOne({ id_user: user._id });
 
-    // If the user does not exist, return an error
+    // If the doctor does not exist, return an error
     if (!doctor) {
         return res.status(404).json({ error: 'Professionel non trouvé.', status : 404 });
     }
 
     try {
-        // Find all doctors linked to the user
-        const users = await Doctor.find({ _id: { $in: doctor.users_link } });
+        // Find all users linked to the doctor
+        const users = await User.find({ _id: { $in: doctor.users_link } }, { _id: 1, firstname: 1, lastname: 1, email: 1, phone: 1 });
 
-        //If succes, return requests or empty
+        //If succes, return users
         return res.status(200).json({ users: users, status:200 });
     } catch (error) {
         //If an error occurs, send an error message
