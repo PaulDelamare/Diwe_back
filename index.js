@@ -10,6 +10,7 @@ const helmet = require('helmet');
 const AuthRoute = require('./routes/auth.routes');
 const PopupRoute = require('./routes/popup.routes');
 const UserRoute = require('./routes/user.routes');
+const DoctorRoute = require('./routes/doctor.routes');
 
 
 //Require Task
@@ -61,7 +62,6 @@ app.use(express.urlencoded({extended:true}));
 //Initialise passport
 app.use(passport.initialize());
 
-
 //////////
 //////////
 
@@ -71,6 +71,7 @@ app.use(passport.initialize());
 app.use('/api', AuthRoute);
 app.use('/api', PopupRoute);
 app.use('/api', UserRoute);
+app.use('/api', DoctorRoute);
 
 //////////
 //////////
