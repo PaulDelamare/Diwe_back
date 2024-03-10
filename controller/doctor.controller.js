@@ -14,8 +14,8 @@ const RequestLink = require('../models/RequestLink');
 //////////
 //FUNCTION CONTROLLER
 
-//CREATE POPUP
 /**
++ * Get all requests link for doctor
 + *
 + * @param {Object} req - the request object
 + * @param {Object} res - the response object
@@ -67,7 +67,7 @@ exports.getRequestLink = async (req, res) => {
             {
                 // Select data that we need in the result
                 $project: {
-                    _id: 0,
+                    _id: 1,
                     status: 1,
                     created_at: 1,
                     users:1
@@ -78,7 +78,86 @@ exports.getRequestLink = async (req, res) => {
         //Return requests 
         return res.status(200).json({ requests:requestsWithUsers, status : 200 });
     } catch (error) {
-        //If an errir occur, return this error
+        //If an error occur, return this error
+        return res.status(500).json({ error: error, status : 500 });
+    }
+}
+
+exports.validateRequestLink = async (req, res) => {
+
+    //////////
+    //GET DATA INFORMATION FROM DATA BASE
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    //Get doctor information
+    const doctor = await Doctor.findOne({ id_user: user._id });
+
+    // If the user does not exist, return an error
+    if (!doctor) {
+        return res.status(404).json({ error: 'Professionel non trouvé.', status : 404 });
+    }
+
+    //Find the request with id
+    const requestValidate = await RequestLink.findOne({_id : req.body.id, id_doctor : doctor._id} );
+    // If the user does not exist, return an error
+    if (!requestValidate) {
+        return res.status(404).json({ error: 'Cette requête n\'existe pas.', status : 404 });
+    }
+
+    const userRequest = await User.findById(requestValidate.id_user);
+
+    // If the user does not exist, return an error
+    if (!userRequest) {
+        return res.status(404).json({ error: 'Cette utilisateur n\'existe pas ou plus.', status : 404 });
+    }
+
+    //////////
+    //////////
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Check if boolean is correct
+    validateBody.booleanFieldsValidator('validate');
+    
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+
+    // Check if user already link
+    const alreadyLink = doctor.users_link.includes(requestValidate.id_user);
+
+    // If the user already link, return an error
+    if (alreadyLink) {
+        return res.status(401).json({ error: 'Vous êtes déjà lié.', status : 401 });
+    }
+
+    try {
+
+        // update the request status
+        await RequestLink.updateOne({ _id: req.body.id }, { $set: { status: req.body.validate ? 'accepted' : 'refused', reponse_date : new Date() } });
+
+        // If the request are validated by the doctor
+        if (req.body.validate) {
+            await Doctor.updateOne({ _id: doctor._id }, { $push: { users_link: requestValidate.id_user } });
+            await User.updateOne({ _id: requestValidate.id_user }, { $push: { doctors_link: doctor._id } });
+        }
+
+        // If the try is ok, return a JSON response
+        return res.status(200).json({ message: `${req.body.validate ? 'La requête a été validé' : 'La requête a été refusé'}`, status : 200 });
+    } catch (error) {
+
+        // If an error occur, return this error
         return res.status(500).json({ error: error, status : 500 });
     }
 }

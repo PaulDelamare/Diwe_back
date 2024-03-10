@@ -286,6 +286,15 @@ class ValidateBody{
 
     }
 
+    booleanFieldsValidator(boolean_fields) {
+        // Create rule
+        const validationRule = check(boolean_fields).isBoolean().withMessage('Le champ doit être un booleen');
+
+         // Push rules in rules array
+         this._addValidationRule(validationRule);
+        
+    }
+
     //////////
     //////////
 

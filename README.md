@@ -549,6 +549,48 @@ Response :
 
 > The message and the status error depends on the error
 
+
+### Validate Request
+
+`POST doctor/validate-request`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+| Name     | Type    | Description                                                 |
+| -------- | ------- | ----------------------------------------------------------- |
+| ID       | string  | The request id                                              |
+| validate | boolean | The response request (true for accept and false for refuse) |
+
+Response :
+
+- 200
+
+```json
+{
+    "message": string,
+    "status": number,
+}
+```
+
+- 401/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
