@@ -5,6 +5,7 @@
 const User = require('../models/User');
 //Import popup model
 const DailyPopup = require('../models/Popup');
+// Import validateBody class for have an acces to validate rules
 const ValidateBody = require('../utils/validateBody');
 //Require fs (file system)
 const fs = require('fs');
@@ -12,7 +13,9 @@ const fs = require('fs');
 const path = require('path');
 //Import bcrypt for hash password
 const bcrypt = require('bcryptjs');
+//Import Request link model
 const RequestLink = require('../models/RequestLink');
+//Import Doctor model
 const Doctor = require('../models/Doctor');
 
 //////////
