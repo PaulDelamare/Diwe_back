@@ -491,10 +491,10 @@ exports.getDoctorLink = async (req, res) => {
 
     try {
         // Find all doctors linked to the user
-        const users = await Doctor.find({ _id: { $in: user.doctors_link } }, { _id: 1, id_user: 1, firstname: 1, lastname: 1, email: 1, phone: 1 });
+        const doctors = await Doctor.find({ _id: { $in: user.doctors_link } }, { _id: 1, id_user: 1, firstname: 1, lastname: 1, email: 1, phone: 1 });
 
         //If succes, return requests or empty
-        return res.status(200).json({ doctors: users, status:200 });
+        return res.status(200).json({ doctors: doctors, status:200 });
     } catch (error) {
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des professionnels.', status: 500 });
