@@ -16,6 +16,7 @@ const checkConnection = require ('../utils/validateRole');
 //Route create new popup
 router.get('/doctor/request', checkConnection('health'), DocotorController.getRequestLink);
 router.post('/doctor/validate-request', checkConnection('health'), DocotorController.validateRequestLink);
+router.get('/doctor/users', checkConnection('health'), DocotorController.getUsersLink);
 
 //////////
 //////////
