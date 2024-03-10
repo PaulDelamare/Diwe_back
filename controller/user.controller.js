@@ -361,7 +361,7 @@ exports.requestLink = async (req, res) => {
     //Validation
     const validateBody = new ValidateBody();
 
-    //Check if password is correct
+    //Check if link code is correct
     validateBody.linkCodeValidator('link_code', true);
 
     //Check the rules with data in body
@@ -375,13 +375,20 @@ exports.requestLink = async (req, res) => {
     // Find Doctor who have the same link_code
     const doctor = await Doctor.findOne({ binding_code: req.body.link_code });
 
+    // If account is already linked
+    if (doctor.users_link.includes(user._id)) {
+        return res.status(409).json({ error: 'Vous avez déjà lié ce professionnel à votre compte.', status : 409 });
+    }
+
     // If the dotcor does not exist, return an error
     if (!doctor) {
         return res.status(404).json({ error: 'Spécialiste de santé non trouvé.', status : 404 });
     }
 
-    const allReadyExist =  await RequestLink.findOne({ id_user: user._id, id_doctor: doctor._id });
+    // Find if request already exist
+    const allReadyExist =  await RequestLink.findOne({ id_user: user._id, id_doctor: doctor._id, reponse_date:null });
 
+    // If the request already exist, return an error
     if(allReadyExist){
         return res.status(409).json({ error: 'Vous avez déjà envoyé une demande de liaison de compte.', status : 409 });
     }
@@ -448,7 +455,7 @@ exports.findRequestLinkUser = async (req, res) => {
             {
                 // Select data that we need in the result
                 $project: {
-                    _id: 0,
+                    _id: 1,
                     status: 1,
                     created_at: 1,
                     doctor:1
