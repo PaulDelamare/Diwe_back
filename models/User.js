@@ -66,6 +66,10 @@ const UserSchema = new mongoose.Schema({
     request_deletion:{
         type: Date,
         default : null
+    },
+    doctors_link:{
+        type: Array,
+        default: []
     }
 });
 
