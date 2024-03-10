@@ -62,7 +62,6 @@ app.use(express.urlencoded({extended:true}));
 //Initialise passport
 app.use(passport.initialize());
 
-
 //////////
 //////////
 

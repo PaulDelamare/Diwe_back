@@ -30,6 +30,7 @@ exports.getRequestLink = async (req, res) => {
         return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
     }
 
+    //Get doctor information
     const doctor = await Doctor.findOne({ id_user: user._id });
 
     // If the user does not exist, return an error
@@ -43,13 +44,13 @@ exports.getRequestLink = async (req, res) => {
                 $match: { id_doctor: doctor._id }
             },
             {
-                // Find doctor linked to the id_doctor
+                // Find user linked to the id_doctor
                 $lookup: {
                     from: 'user',
                     localField: 'id_user',
                     foreignField: '_id',
                     as: 'users',
-                    // Find only doctor data that we need
+                    // Find only user data that we need
                     pipeline: [
                         {
                           $project: {
@@ -74,8 +75,10 @@ exports.getRequestLink = async (req, res) => {
             }
         ]);
 
+        //Return requests 
         return res.status(200).json({ requests:requestsWithUsers, status : 200 });
     } catch (error) {
+        //If an errir occur, return this error
         return res.status(500).json({ error: error, status : 500 });
     }
 }
