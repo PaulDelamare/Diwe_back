@@ -496,6 +496,53 @@ Response :
 
 > The message and the status error depends on the error
 
+### Get doctor linked
+
+`GET user/doctor`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response :
+
+- 200
+
+```json
+{
+    "doctors": [
+        {
+            "_id": string,
+            "id_user": string,
+            "firstname": string,
+            "lastname": string,
+            "email": string,
+            "phone": string
+        }
+    ],
+    "status": number,
+}
+```
+
+- 404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Doctor
 
 ### Get Request
