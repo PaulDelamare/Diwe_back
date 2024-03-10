@@ -41,6 +41,10 @@ const DoctoSchema = new mongoose.Schema({
     updated_at:{
         type: Date,
         default: null
+    },
+    users_link:{
+        type: Array,
+        default: [],
     }
 });
 
