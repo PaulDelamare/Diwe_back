@@ -596,7 +596,6 @@ Response :
 
 > The message and the status error depends on the error
 
-
 ### Validate Request
 
 `POST doctor/validate-request`
@@ -628,6 +627,53 @@ Response :
 ```
 
 - 401/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+
+### Get users linked
+
+`GET doctor/users`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response :
+
+- 200
+
+```json
+{
+    "users": [
+        {
+            "_id": string,
+            "firstname": string,
+            "lastname": string,
+            "email": string,
+            "phone": string
+        }
+    ],
+    "status": number,
+}
+```
+
+- 404/500
 
 ```json
 {
