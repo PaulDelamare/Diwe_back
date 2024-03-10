@@ -493,7 +493,7 @@ exports.getDoctorLink = async (req, res) => {
         // Find all doctors linked to the user
         const doctors = await Doctor.find({ _id: { $in: user.doctors_link } }, { _id: 1, id_user: 1, firstname: 1, lastname: 1, email: 1, phone: 1 });
 
-        //If succes, return requests or empty
+        //If succes, return doctors
         return res.status(200).json({ doctors: doctors, status:200 });
     } catch (error) {
         //If an error occurs, send an error message
