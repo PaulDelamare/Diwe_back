@@ -472,5 +472,34 @@ exports.findRequestLinkUser = async (req, res) => {
     }
 }
 
+/**
++ * Retrieves the doctor information linked to the authenticated user.
++ *
++ * @param {Object} req - The request object
++ * @param {Object} res - The response object
++ * @return {Promise} The result of the doctor information retrieval
++ */
+exports.getDoctorLink = async (req, res) => {
+
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    try {
+        // Find all doctors linked to the user
+        const users = await Doctor.find({ _id: { $in: user.doctors_link } }, { _id: 1, id_user: 1, firstname: 1, lastname: 1, email: 1, phone: 1 });
+
+        //If succes, return requests or empty
+        return res.status(200).json({ doctors: users, status:200 });
+    } catch (error) {
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des professionnels.', status: 500 });
+    }
+}
+
 //////////
 //////////
