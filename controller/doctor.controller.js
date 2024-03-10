@@ -83,6 +83,14 @@ exports.getRequestLink = async (req, res) => {
     }
 }
 
+/**
++ * Validate or refuse a request link between a doctor and a patient
++ * 
++ * @param {express.Request} req - The request
++ * @param {express.Response} res - The response
++ * 
++ * @returns {JSON} - A JSON response with a message
++ */
 exports.validateRequestLink = async (req, res) => {
 
     //////////
