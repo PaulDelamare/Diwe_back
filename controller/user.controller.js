@@ -472,6 +472,13 @@ exports.findRequestLinkUser = async (req, res) => {
     }
 }
 
+/**
++ * Retrieves the doctor information linked to the authenticated user.
++ *
++ * @param {Object} req - The request object
++ * @param {Object} res - The response object
++ * @return {Promise} The result of the doctor information retrieval
++ */
 exports.getDoctorLink = async (req, res) => {
 
     //Find user last information with the id user in req (jwt)
