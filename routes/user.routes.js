@@ -32,6 +32,8 @@ router.put('/user/request-deletion', checkConnection(), UserController.requestDe
 router.post('/user/request-link', checkConnection('user'), UserController.requestLink);
 //Request link
 router.get('/user/request', checkConnection('user'), UserController.findRequestLinkUser);
+//Get Doctor linked
+router.get('/user/doctor', checkConnection('user'), UserController.getDoctorLink);
 
 //////////
 //////////
