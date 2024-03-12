@@ -7,10 +7,6 @@ const User = require('../models/User');
 const uploadImage = require('../utils/uploadImage');
 //Import validateBody class for have an acces to validate rules
 const ValidateBody = require('../utils/validateBody');
-//Require fs (file system)
-const fs = require('fs');
-//Require path
-const path = require('path');
 //////////
 //////////
 
@@ -75,9 +71,51 @@ exports.create = async (req, res) => {
         //Create meal
         await Meal.create(req.body, res);
 
-        //If popup is create return success
+        //If meal is create return success
         res.status(201).json({ message: "Le repas a été correctement enregistré", status : 201 });
     } catch (error) {
+        //If an error occurs, return an error
+        res.status(500).json({ error: error, status: 500 });
+    }
+}
+
+
+exports.getLast = async (req, res) => {
+     
+    //Validation
+    const user = await User.findById(req.user._id);
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Check if calcium is correct
+    validateBody.numberValidator('number', true, 0);
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+     
+    //If there is no errors
+    try {
+        //Pass id_user in body
+        req.body.id_user = user._id;
+        
+        // Execute query
+        const recentMeals = await Meal.getLast(req, res);
+
+        //If meal are correctly find return success
+        res.status(200).json({ meals: recentMeals, status: 200 });
+    } catch (error) {
+
         //If an error occurs, return an error
         res.status(500).json({ error: error, status: 500 });
     }
