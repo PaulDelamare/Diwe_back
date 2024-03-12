@@ -6,7 +6,7 @@ const passport = require('passport');
 + * @param {string} role - The role required for access
 + * @return {function} Express middleware function
 + */
-const checkAuthAndRole = (role = "") => {
+const checkAuthAndRole = (role = []) => {
     return (req, res, next) => {
         // Check JWT authentication
         passport.authenticate('jwt', { session: false }, (err, user, info) => {
@@ -20,7 +20,7 @@ const checkAuthAndRole = (role = "") => {
             }
 
             // Check if the user has the required role
-            if (role && user.role !== role) {
+            if (role && !role.includes(user.role)) {
                 return res.status(403).json({ error: 'Accès interdit. Vous n\'avez pas le rôle nécessaire.', status : 403 });
             }
 
