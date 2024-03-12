@@ -3,6 +3,7 @@
 const { validationResult, check } = require('express-validator');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const { isValidObjectId } = require('mongoose');
 //////////
 //////////
 
@@ -297,7 +298,10 @@ class ValidateBody{
 
     numberValidator(number, require = false, min = false, max = false) {
         // Create rule
-        const validationRule = check(number).isNumeric().withMessage('Le champ doit être un nombre');
+        const validationRule = check(number);
+
+        //Basic validation
+        validationRule.isNumeric().withMessage('Le champ doit être un nombre');
 
          // Add conditionnal rules (require or not)
         if (require) {
@@ -326,6 +330,29 @@ class ValidateBody{
         }
 
          // Push rules in rules array
+        this._addValidationRule(validationRule);
+    }
+
+    validateObjectId(objectId, require = false) {
+        // Create rule
+        const validationRule = check(objectId);
+
+        //Validation rule
+        validationRule.custom((value) => {
+            if (!isValidObjectId(value)) {
+                console.log(value)
+                throw new Error('L\'id est invalide');
+            }
+            // Value is superior to min
+            return true;
+        });
+
+        // Add conditionnal rules (require or not)
+        if (require) {
+            validationRule.notEmpty().withMessage('L\'id est obligatoire');
+        }
+
+        // Push rules in rules array
         this._addValidationRule(validationRule);
     }
 
