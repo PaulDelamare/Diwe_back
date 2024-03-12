@@ -3,6 +3,7 @@
 const { validationResult, check } = require('express-validator');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const { isValidObjectId } = require('mongoose');
 //////////
 //////////
 
@@ -269,6 +270,13 @@ class ValidateBody{
         this._addValidationRule(validationRule);
     }
 
+    /**
+     * A function to validate the link code.
+     *
+     * @param {string} link_code - name in body
+     * @param {boolean} [require=false] - Flag indicating if the link code is required
+     * @return {void} 
+     */
     linkCodeValidator(link_code, require = false) {
         // Create rule
         const validationRule = check(link_code);
@@ -286,18 +294,33 @@ class ValidateBody{
 
     }
 
+    /**
+     * A function to validate boolean fields.
+     *
+     * @param {string} boolean_fields - name in body
+     */
     booleanFieldsValidator(boolean_fields) {
         // Create rule
         const validationRule = check(boolean_fields).isBoolean().withMessage('Le champ doit être un booleen');
 
-         // Push rules in rules array
-         this._addValidationRule(validationRule);
-        
+        // Push rules in rules array
+        this._addValidationRule(validationRule);
     }
 
+    /**
+     * Validates a number based on the specified rules.
+     *
+     * @param {string} number - name in body
+     * @param {boolean} require - whether the number is required
+     * @param {number} min - the minimum value allowed for the number
+     * @param {number} max - the maximum value allowed for the number
+     */
     numberValidator(number, require = false, min = false, max = false) {
         // Create rule
-        const validationRule = check(number).isNumeric().withMessage('Le champ doit être un nombre');
+        const validationRule = check(number);
+
+        //Basic validation
+        validationRule.isNumeric().withMessage('Le champ doit être un nombre');
 
          // Add conditionnal rules (require or not)
         if (require) {
@@ -326,6 +349,36 @@ class ValidateBody{
         }
 
          // Push rules in rules array
+        this._addValidationRule(validationRule);
+    }
+
+    /**
+     * Validate the given object id.
+     *
+     * @param {string} objectId - name in body
+     * @param {boolean} require - require or not
+     * @return {void}
+     */
+    validateObjectId(objectId, require = false) {
+        // Create rule
+        const validationRule = check(objectId);
+
+        //Validation rule
+        validationRule.custom((value) => {
+            if (!isValidObjectId(value)) {
+                console.log(value)
+                throw new Error('L\'id est invalide');
+            }
+            // Value is superior to min
+            return true;
+        });
+
+        // Add conditionnal rules (require or not)
+        if (require) {
+            validationRule.notEmpty().withMessage('L\'id est obligatoire');
+        }
+
+        // Push rules in rules array
         this._addValidationRule(validationRule);
     }
 

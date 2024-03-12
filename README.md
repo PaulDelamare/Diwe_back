@@ -735,6 +735,61 @@ Response :
 
 > The message and the status error depends on the error
 
+### Get meal 
+
+`GET meal`
+
+Authentication :
+
+> Jwt token require and only blog role can use it
+
+Parameters :
+
+> No parameters
+
+Body :
+
+| Name    | Type   | Description                               |
+| ------- | ------ | ----------------------------------------- |
+| number  | number | number of meals to collect (0 for all)    |
+| id_user | string | User id to consult (Only for health role) |
+
+Response : 
+
+- 200
+
+```json
+{
+    "meals": [
+        {
+            "_id": string,
+            "image_path": string,
+            "name": string,
+            "calories": number,
+            "proteins": number,
+            "lipids": number,
+            "glucids": number,
+            "fibers": number,
+            "calcium": number,
+            "created_at": Date
+        },
+        ...
+    ],
+    "status": number
+}
+```
+
+- 401/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
