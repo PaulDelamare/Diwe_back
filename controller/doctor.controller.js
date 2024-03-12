@@ -93,6 +93,21 @@ exports.getRequestLink = async (req, res) => {
 + */
 exports.validateRequestLink = async (req, res) => {
 
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Check if boolean is correct
+    validateBody.booleanFieldsValidator('validate');
+    validateBody.validateObjectId('id', true);
+    
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+
     //////////
     //GET DATA INFORMATION FROM DATA BASE
     //Find user last information with the id user in req (jwt)
@@ -127,20 +142,6 @@ exports.validateRequestLink = async (req, res) => {
 
     //////////
     //////////
-
-    //Validation
-    const validateBody = new ValidateBody();
-
-    //Check if boolean is correct
-    validateBody.booleanFieldsValidator('validate');
-    
-    //Check the rules with data in body
-    let valideBody = await validateBody.validateRules(req);
-
-    if (!valideBody.isEmpty()) {
-        // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
-    }
 
     // Check if user already link
     const alreadyLink = doctor.users_link.includes(requestValidate.id_user);
