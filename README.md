@@ -684,6 +684,57 @@ Response :
 
 > The message and the status error depends on the error
 
+## Meal
+
+### Add meal 
+
+`POST meal`
+
+Authentication :
+
+> Jwt token require and only blog role can use it
+
+Parameters :
+
+> No parameters
+
+Body :
+
+- Data must be sent as FormData
+
+| Name     | Type   | Description       |
+| -------- | ------ | ----------------- |
+| image    | file   | The meal image    |
+| name     | string | The meal name     |
+| calories | number | The meal calories |
+| proteins | number | The meal proteins |
+| lipids   | number | The meal lipids   |
+| glucids  | number | The meal glucids  |
+| fibers   | number | The meal fibers   |
+| calcium  | number | The meal calcium  |
+
+Response : 
+
+- 201
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 401/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
@@ -705,7 +756,7 @@ Body :
 | Name  | Type   | Description       |
 | ----- | ------ | ----------------- |
 | text  | string | The text on popup |
-| image | file | The popup image   |
+| image | file   | The popup image   |
 
 Response : 
 
