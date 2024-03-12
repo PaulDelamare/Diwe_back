@@ -1,6 +1,7 @@
 //////////
 //REQUIRE
 //Import meal model
+const Doctor = require('../models/Doctor');
 const Meal = require('../models/Meal');
 //Import user model
 const User = require('../models/User');
@@ -95,6 +96,10 @@ exports.getLast = async (req, res) => {
     //Check if calcium is correct
     validateBody.numberValidator('number', true, 0);
 
+    if (user.role === "health") {
+        validateBody.validateObjectId('id_user',true);
+    }
+
     //Check the rules with data in body
     let valideBody = await validateBody.validateRules(req);
 
@@ -106,8 +111,19 @@ exports.getLast = async (req, res) => {
      
     //If there is no errors
     try {
-        //Pass id_user in body
-        req.body.id_user = user._id;
+
+        // If the user is a doctor
+        if (user.role === "health") {
+            // Check if he has authorized 
+            const doctor = await Doctor.findOne({ id_user: user._id });
+            if (!doctor.users_link.includes(req.body.id_user)) {
+                // If not, return an error
+                return res.status(403).json({ error: 'Vous n\'avez pas accès aux informations de cet utilisateur.', status : 403 });
+            }
+        }else{
+            //Pass id_user in body
+            req.body.id_user = user._id;
+        } 
         
         // Execute query
         const recentMeals = await Meal.getLast(req, res);
