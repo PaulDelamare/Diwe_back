@@ -2,6 +2,7 @@
 //REQUIRE
 //Import popup model
 const Popup = require('../models/Popup');
+const uploadImage = require('../utils/uploadImage');
 //Import validateBody class for have an acces to validate rules
 const ValidateBody = require('../utils/validateBody');
 //Require fs (file system)
@@ -40,26 +41,16 @@ exports.create = async (req, res) => {
         return res.status(422).json({ errors: valideBody.array(), status : 422 });
     }
     try {
-        //Stock in variable image 
-        const uploadedImage = req.file;
-        //get image extension
-        const ext = path.extname(uploadedImage.originalname);
-        //Rename image for security
-        const fileName = `${Date.now()}-${uploadedImage.originalname.toLowerCase().replace(/[^a-z0-9]/g, '')}${ext}`;
-        //Create image file path
-        const imageFilePath = `uploads/dailyPopup/${fileName}`;
-        //Save image in image file path
-        fs.writeFileSync(imageFilePath, uploadedImage.buffer);
 
-        //Add in body image path
-        req.body.image_path = imageFilePath;
+        //Upload image
+        req.body.image_path = uploadImage(req.file)('uploads/dailyPopup/');
 
         //Create popup
         await Popup.create(req.body, res);
 
         //If popup is create return success
         res.status(201).json({ 
-            message: "La popup a été correctement enregistre",
+            message: "La popup a été correctement enregistré",
             status : 201
          });
 

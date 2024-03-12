@@ -62,6 +62,13 @@ const Doctor = mongoose.model('Doctor', DoctoSchema, 'doctor');
 //////////
 //FUNCTIONS
 
+/**
+ * Creates a new Doctor in the database.
+ *
+ * @param {Object} newDoctor - The new doctor information
+ * @param {Function} resulte - The callback function
+ * @return {Promise} A Promise that resolves to the saved Doctor object
+ */
 Doctor.create = async (newDoctor, resulte) => {
     //Get body information
     const {email, firstname, lastname, binding_code, id_user, phone} = newDoctor;
