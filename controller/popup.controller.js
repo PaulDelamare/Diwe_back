@@ -50,7 +50,7 @@ exports.create = async (req, res) => {
 
         //If popup is create return success
         res.status(201).json({ 
-            message: "La popup a été correctement enregistre",
+            message: "La popup a été correctement enregistré",
             status : 201
          });
 
