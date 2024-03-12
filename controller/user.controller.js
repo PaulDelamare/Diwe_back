@@ -115,16 +115,9 @@ exports.updateProfilePicture = async (req, res) => {
                 });
             }
         }
-        //Stock in variable image 
-        const uploadedImage = req.file;
-        //get image extension
-        const ext = path.extname(uploadedImage.originalname);
-        //Rename image for security
-        const fileName = `${Date.now()}-${uploadedImage.originalname.toLowerCase().replace(/[^a-z0-9]/g, '')}${ext}`;
-        //Create image file path
-        const imageFilePath = `uploads/profilePicture/${fileName}`;
-        //Save image in image file path
-        fs.writeFileSync(imageFilePath, uploadedImage.buffer);
+
+        //Upload image
+        const imageFilePath = uploadImage(req.file)('uploads/profilePicture/');
 
         //Update user profile picture
         await User.findByIdAndUpdate(user._id, { profile_picture: imageFilePath, updated_at: Date.now() }, { new: true });
