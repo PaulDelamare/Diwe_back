@@ -13,9 +13,12 @@ const checkConnection = require ('../utils/validateRole');
 //////////
 //API ROUTES
 
-//Route create new popup
+//Routes
+//Route for request link
 router.get('/doctor/request', checkConnection('health'), DocotorController.getRequestLink);
+// Validate request
 router.post('/doctor/validate-request', checkConnection('health'), DocotorController.validateRequestLink);
+//Get all users linked to doctor
 router.get('/doctor/users', checkConnection('health'), DocotorController.getUsersLink);
 
 //////////
