@@ -80,7 +80,13 @@ exports.create = async (req, res) => {
     }
 }
 
-
+/**
+ * Get the last meals for the user and return a JSON response.
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @return {JSON} A JSON response with the recent meals and a status code
+ */
 exports.getLast = async (req, res) => {
      
     //Validation
