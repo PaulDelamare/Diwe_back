@@ -17,9 +17,9 @@ const checkConnection = require ('../utils/validateRole');
 //API ROUTES
 
 //Route add meal
-router.post('/meal', checkConnection('user'), upload, MealController.create);
+router.post('/meal', checkConnection(['user']), upload, MealController.create);
 //Route get last meal
-router.get('/meal', checkConnection('user'), MealController.getLast);
+router.get('/meal', checkConnection(['user', 'health']), MealController.getLast);
 
 //////////
 //////////

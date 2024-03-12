@@ -16,7 +16,7 @@ const checkConnection = require ('../utils/validateRole');
 //API ROUTES
 
 //Route create new popup
-router.post('/new-daily-popup', checkConnection('blog'), upload, PopupController.create);
+router.post('/new-daily-popup', checkConnection(['blog']), upload, PopupController.create);
 
 //////////
 //////////
