@@ -366,7 +366,6 @@ class ValidateBody{
         //Validation rule
         validationRule.custom((value) => {
             if (!isValidObjectId(value)) {
-                console.log(value)
                 throw new Error('L\'id est invalide');
             }
             // Value is superior to min
