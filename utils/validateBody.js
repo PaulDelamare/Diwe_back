@@ -295,6 +295,40 @@ class ValidateBody{
         
     }
 
+    numberValidator(number, require = false, min = false, max = false) {
+        // Create rule
+        const validationRule = check(number).isNumeric().withMessage('Le champ doit être un nombre');
+
+         // Add conditionnal rules (require or not)
+        if (require) {
+            validationRule.notEmpty().withMessage('Le champ est obligatoire');
+        }
+
+        if (min) {
+            // Check if the number is superior to min
+            validationRule.custom((value) => {
+                if (value < min) {
+                    throw new Error(`Le nombre doit être supérieur à ${min}` );
+                }
+                // Value is superior to min
+                return true;
+            });
+        }
+        if (max) {
+            // Check if the number is inferior to max
+            validationRule.custom((value) => {
+                if (value > max) {
+                    throw new Error(`Le nombre doit être inférieur à ${max}` );
+                }
+                // Value is inferior to max
+                return true;
+            });
+        }
+
+         // Push rules in rules array
+        this._addValidationRule(validationRule);
+    }
+
     //////////
     //////////
 
