@@ -18,7 +18,8 @@ const checkConnection = require ('../utils/validateRole');
 
 //Route add meal
 router.post('/meal', checkConnection('user'), upload, MealController.create);
-
+//Route get last meal
+router.get('/meal', checkConnection('user'), MealController.getLast);
 
 //////////
 //////////
