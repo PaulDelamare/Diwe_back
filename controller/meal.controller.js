@@ -144,6 +144,13 @@ exports.getLast = async (req, res) => {
     }
 }
 
+/**
++ * Delete a meal from the database based on the provided id.
++ *
++ * @param {Object} req - The request object containing the id of the meal to delete
++ * @param {Object} res - The response object to send back
++ * @return {Object} JSON object with a message indicating the result of the deletion operation
++ */
 exports.delete = async (req, res) => {
 
     // Check if the id is valid
