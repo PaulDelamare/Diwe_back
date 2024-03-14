@@ -131,7 +131,6 @@ exports.validateRequestLink = async (req, res) => {
         return res.status(404).json({ error: 'Professionel non trouvé.', status : 404 });
     }
 
-    console.log(doctor._id)
     //Find the request with id
     const requestValidate = await RequestLink.findOne({_id : req.params.id, id_doctor : doctor._id} );
     // If the user does not exist, return an error
