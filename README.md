@@ -789,6 +789,44 @@ Response :
 
 > The message and the status error depends on the error
 
+### Delete meal 
+
+`DELETE meal/:id`
+
+Authentication :
+
+> Jwt token require and only blog role can use it
+
+Parameters :
+
+> Pass as parameter the id of the request to accept
+
+Body :
+
+> No body
+
+Response : 
+
+- 200
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 400/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
