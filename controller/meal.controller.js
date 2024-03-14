@@ -1,6 +1,7 @@
 //////////
 //REQUIRE
 //Import meal model
+const { isValidObjectId } = require('mongoose');
 const Doctor = require('../models/Doctor');
 const Meal = require('../models/Meal');
 //Import user model
@@ -141,6 +142,42 @@ exports.getLast = async (req, res) => {
         //If an error occurs, return an error
         res.status(500).json({ error: error, status: 500 });
     }
+}
+
+/**
++ * Delete a meal from the database based on the provided id.
++ *
++ * @param {Object} req - The request object containing the id of the meal to delete
++ * @param {Object} res - The response object to send back
++ * @return {Object} JSON object with a message indicating the result of the deletion operation
++ */
+exports.delete = async (req, res) => {
+
+    // Check if the id is valid
+    if(!isValidObjectId(req.params.id)){
+        return res.status(400).json({ error: 'Id invalide', status: 400 });
+    }
+
+    // Check if the meal exists and belongs to the user
+    const meal = await Meal.findOne({_id : req.params.id, id_user : req.user._id});
+
+    // If the meal does not exist, return an error
+    if (!meal) {
+        return res.status(404).json({ error: 'Repas non trouvé.', status : 404 });
+    }
+     
+     // If there is no errors
+    try {
+        // try to delete this meal
+        await Meal.findByIdAndDelete(req.params.id);
+
+        //If meal is delete return success
+        res.status(200).json({ message: "Le repas a été correctement supprimé", status : 200 });
+        
+    } catch (error) {
+        // If an error occurs, return an error
+        res.status(500).json({ error: error, status: 500 });
+    }  
 }
 
 //////////
