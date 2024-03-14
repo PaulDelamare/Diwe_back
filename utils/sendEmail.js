@@ -50,6 +50,7 @@ async function sendEmail(to, sender, subject, templateName, data, attachments = 
     data.id_email = email._id;
 
     // Parameters to pass to the template
+    // Header and footer are necessary for the style 
     const html = template({
         header: headerTemplate(),
         footer: footerTemplate(),
