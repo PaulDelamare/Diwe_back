@@ -598,7 +598,7 @@ Response :
 
 ### Validate Request
 
-`POST doctor/validate-request`
+`POST doctor/validate-request/:id`
 
 Authentication :
 
@@ -606,13 +606,12 @@ Authentication :
 
 Parameters :
 
-> No parameters
+> Pass as parameter the id of the request to accept
 
 Body :
 
 | Name     | Type    | Description                                                 |
 | -------- | ------- | ----------------------------------------------------------- |
-| ID       | string  | The request id                                              |
 | validate | boolean | The response request (true for accept and false for refuse) |
 
 Response :

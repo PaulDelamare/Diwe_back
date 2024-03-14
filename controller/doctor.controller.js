@@ -8,6 +8,7 @@ const Doctor = require('../models/Doctor');
 const ValidateBody = require('../utils/validateBody');
 //Import Request link model
 const RequestLink = require('../models/RequestLink');
+const { isValidObjectId } = require('mongoose');
 //////////
 //////////
 
@@ -93,12 +94,16 @@ exports.getRequestLink = async (req, res) => {
 + */
 exports.validateRequestLink = async (req, res) => {
 
+    // Check if the id is valid
+    if(!isValidObjectId(req.params.id)){
+        return res.status(400).json({ error: 'Id invalide', status: 400 });
+    }
+
     //Validation
     const validateBody = new ValidateBody();
 
     //Check if boolean is correct
     validateBody.booleanFieldsValidator('validate');
-    validateBody.validateObjectId('id', true);
     
     //Check the rules with data in body
     let valideBody = await validateBody.validateRules(req);
@@ -126,8 +131,9 @@ exports.validateRequestLink = async (req, res) => {
         return res.status(404).json({ error: 'Professionel non trouvé.', status : 404 });
     }
 
+    console.log(doctor._id)
     //Find the request with id
-    const requestValidate = await RequestLink.findOne({_id : req.body.id, id_doctor : doctor._id} );
+    const requestValidate = await RequestLink.findOne({_id : req.params.id, id_doctor : doctor._id} );
     // If the user does not exist, return an error
     if (!requestValidate) {
         return res.status(404).json({ error: 'Cette requête n\'existe pas.', status : 404 });
@@ -154,7 +160,7 @@ exports.validateRequestLink = async (req, res) => {
     try {
 
         // update the request status
-        await RequestLink.updateOne({ _id: req.body.id }, { $set: { status: req.body.validate ? 'accepted' : 'refused', reponse_date : new Date() } });
+        await RequestLink.updateOne({ _id: req.params.id }, { $set: { status: req.body.validate ? 'accepted' : 'refused', reponse_date : new Date() } });
 
         // If the request are validated by the doctor
         if (req.body.validate) {
