@@ -11,12 +11,8 @@ const AuthController = require('../controller/auth.controller');
 //////////
 //API ROUTES
 
-//Route register
-router.post('/auth/register', AuthController.create);
-//Router login
-router.post('/auth/login', AuthController.login);
-//Resend email
-router.post('/auth/resend', AuthController.resendEmail);
+//Route validate Account
+router.get('/validateAccount/:email/:token', AuthController.validateAccount);
 
 //////////
 //////////

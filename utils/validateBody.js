@@ -82,7 +82,11 @@ class ValidateBody{
                 // Check if the email already exists in the database
                 const user = await User.findOne({ email: value });
                 if (user) {
-                    throw new Error('L\'adresse e-mail est déjà utilisée.');
+                    if (user.active === false) {
+                        throw new Error('Ce compte est en attente de validation');
+                    }else{
+                        throw new Error('Cet email est déjà utilisé');
+                    }
                 }
                 return true;
             });

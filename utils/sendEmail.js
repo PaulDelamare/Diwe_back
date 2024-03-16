@@ -50,7 +50,7 @@ async function sendEmail(to, sender, subject, templateName, data, attachments = 
     for (const recipient of recipients) {
 
         // Save email in data base
-        const email = await Email.create({subject, sender, recipients: recipient, body, attachment: attachmentsPath });
+        const email = await Email.create({subject, sender, recipient, body, attachment: attachmentsPath });
 
         // Check is successfully created
         if (!email) {

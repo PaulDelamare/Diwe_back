@@ -1,6 +1,8 @@
 //////////
 //REQUIRE
 const mongoose = require('mongoose');
+//Import uuid for create token 
+const { v4: uuidv4 } = require('uuid');
 //////////
 //////////
 
@@ -70,6 +72,10 @@ const UserSchema = new mongoose.Schema({
     doctors_link:{
         type: Array,
         default: []
+    },
+    token: {
+        type: String,
+        default: uuidv4()
     }
 });
 

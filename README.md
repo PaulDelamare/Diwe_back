@@ -61,6 +61,8 @@ Body:
 
 Response :
 
+> An email is send to the user
+
 -   201
 
 ```json
@@ -79,7 +81,7 @@ Response :
 }
 ```
 
-> The message depends on the error
+> The message depends on the error 
 
 ### Login
 
@@ -128,6 +130,79 @@ Response :
 ```
 
 > The message and the status depends on the error
+
+### Resend Validation Email
+
+`POST auth/resend`
+
+Authentication :
+
+> No authentication
+
+Parameters:
+
+> No parameters
+
+Body :
+
+| Name     | Type   | Description              |
+| -------- | ------ | ------------------------ |
+| email    | string | The email of the user    |
+
+Response :
+
+> An email is send to the user
+
+- 200
+
+```json
+{
+    "message" : string,
+    "status":  number
+}
+```
+
+- 404/409/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status depends on the error
+
+### Validate account
+
+`GET validateAccount/:email/:token`
+
+- This route is use only in email for validate account and don't require api-key
+
+Authentication :
+
+> No authentication
+
+Parameters:
+
+- Account Email
+- Account Token
+
+Body :
+
+> No body
+
+Response :
+
+> An email is send to the user
+
+- Success - Redirection
+
+> An email is send for confirm validation
+
+- Error - redirection
+
+> An email is sent to inform of the error during account validation
 
 ## User
 
