@@ -43,31 +43,43 @@ async function sendEmail(to, sender, subject, templateName, data, attachments = 
     //Split recipients 
     const recipients = to.split(',').map(email => email.trim());
 
-    // Save email in data base
-    const email = await Email.create({subject, sender, recipients: recipients, body, attachment: attachments.map(attachment => attachment.path) });
+    // Stock attchments path in variable 
+    const attachmentsPath = attachments.map(attachment => attachment.path);
 
-    // Receive id email for tracking pixel 
-    data.id_email = email._id;
+    // For each recipient send an email
+    for (const recipient of recipients) {
 
-    // Parameters to pass to the template
-    // Header and footer are necessary for the style 
-    const html = template({
-        header: headerTemplate(),
-        footer: footerTemplate(),
-        ...data
-    });
+        // Save email in data base
+        const email = await Email.create({subject, sender, recipients: recipient, body, attachment: attachmentsPath });
 
-    //Mail option for send
-    const mailOptions = {
-        from: sender,
-        to,
-        subject,
-        html,
-        attachments
-    };
+        // Check is successfully created
+        if (!email) {
+            throw new Error('Email not created');
+        }
 
-    // Send Email
-    await transporter.sendMail(mailOptions);
+        // Receive id email for tracking pixel 
+        data.trackingPixel  = `http://localhost:3000/api/read.gif${email._id}`;
+
+        // Parameters to pass to the template
+        // Header and footer are necessary for the style 
+        const html = template({
+            header: headerTemplate(),
+            footer: footerTemplate(),
+            ...data
+        });
+
+        //Mail option for send
+        const mailOptions = {
+            from: sender,
+            to : recipient,
+            subject,
+            html,
+            attachments
+        };
+
+        // Send Email
+        await transporter.sendMail(mailOptions);
+    }  
 }
 
 module.exports = sendEmail;
