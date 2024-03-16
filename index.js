@@ -13,6 +13,7 @@ const UserRoute = require('./routes/user.routes');
 const DoctorRoute = require('./routes/doctor.routes');
 const MealRoute = require('./routes/meal.routes');
 const MailRoute = require('./routes/email.routes');
+const TrackingRoute = require('./routes/trackingEmail.routes');
 
 
 //Require Task
@@ -37,6 +38,10 @@ require('./config/passport-config')(passport);
 
 //
 //////////
+
+// Pass the tracking pixel route before the api check validation for it call in img src
+app.use('/api', TrackingRoute);
+
 
 //////////
 //CONFIG API
