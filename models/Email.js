@@ -12,8 +12,8 @@ const EmailSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    recipients: {
-        type: [String],
+    recipient: {
+        type: String,
         required: true,
     },
     subject: {
@@ -46,7 +46,7 @@ EmailSchema.index({ sender: 1, createdAt: -1 });
 //////////
 //MODEL
 
-const Email = mongoose.model('Email', EmailSchema, 'mail');
+const Email = mongoose.model('Email', EmailSchema, 'email');
 
 //////////
 //////////
@@ -63,13 +63,13 @@ const Email = mongoose.model('Email', EmailSchema, 'mail');
 + */
 Email.create = async (newEmail, resulte) => {
     //Get body information
-    const {subject, sender, recipients, body, attachment} = newEmail;
+    const {subject, sender, recipient, body, attachment} = newEmail;
 
     //Create Email object
     const email = new Email({
         subject,
         sender,
-        recipients,
+        recipient,
         body,
         attachment
     });
