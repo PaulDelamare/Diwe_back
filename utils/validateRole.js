@@ -20,7 +20,7 @@ const checkAuthAndRole = (role = []) => {
             }
 
             // Check if the user has the required role
-            if (role && !role.includes(user.role)) {
+            if (role.length !== 0 && !role.includes(user.role)) {
                 return res.status(403).json({ error: 'Accès interdit. Vous n\'avez pas le rôle nécessaire.', status : 403 });
             }
 
