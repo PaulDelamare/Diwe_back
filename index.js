@@ -8,6 +8,7 @@ const helmet = require('helmet');
 
 //Require route
 const AuthRoute = require('./routes/auth.routes');
+const AuthEmailRoute = require('./routes/auth-email.routes');
 const PopupRoute = require('./routes/popup.routes');
 const UserRoute = require('./routes/user.routes');
 const DoctorRoute = require('./routes/doctor.routes');
@@ -39,8 +40,9 @@ require('./config/passport-config')(passport);
 //
 //////////
 
-// Pass the tracking pixel route before the api check validation for it call in img src
+// Pass routes accessible in email
 app.use('/api', TrackingRoute);
+app.use('/api', AuthEmailRoute);
 
 
 //////////
