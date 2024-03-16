@@ -10,6 +10,11 @@ const bcrypt = require('bcryptjs');
 const ValidateBody = require('../utils/validateBody');
 //Import jwt for create token
 const jwt = require('jsonwebtoken');
+const sendEmail = require('../utils/sendEmail');
+//Require .env for email sender
+require('dotenv').config();
+//Uuid for check the token in email
+const { validate: isUuid, v4: uuidv4 } = require('uuid');
 //////////
 //////////
 
@@ -98,6 +103,12 @@ exports.create = async (req, res) => {
                 await Doctor.create(req.body, res);
             }
         }
+        const emailData = {
+            firstname: req.body.firstname,
+            email: req.body.email,
+            token : user.token
+        }
+        sendEmail(req.body.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
 
         //If user (and doctor) is create return success
         res.status(201).json({ 
@@ -181,6 +192,111 @@ exports.login = async (req, res) => {
     }
 }
 
+/**
++ * Validate an account by email and token.
++ *
++ * @param {object} req - The request object
++ * @param {object} res - The response object
++ * @return {Promise<void>} Promise that resolves when the account is validated
++ */
+exports.validateAccount = async (req, res) => {
+    
+    //Get email and token from params
+    const email = req.params.email;
+    const token = req.params.token;
+
+    //Validate email and token
+    validateEmailAndToken(email, token);
+
+    //Pass in emaildata the email service
+    let emailData = {
+        emailService : process.env.EMAIL_SERVICE
+    }
+
+    //Get user with email
+    const user = await User.findOne({ email, token });
+    //Check if user exist
+    if (!user) {
+        
+        //Send error in email
+        return res.redirect('https://www.needfor-school.com/');
+    }
+
+    //Add firstname if user exist
+    emailData.firstname = user.firstname;
+
+    //Try to update user
+    try {
+        //Update user
+        await User.findOneAndUpdate( { email, token }, { active: true, token: uuidv4() }, { new: true } );
+
+        // If the account is active, return email for validate to user
+        sendEmail(user.email,  process.env.EMAIL_SENDER, 'Compte validé', 'validateEmail/validate-success', emailData);
+        res.redirect('https://www.needfor-school.com/');
+    } catch (error) {
+        //If an error occurs, send an error message
+        console.log(error);
+        sendEmail(email,  process.env.EMAIL_SENDER, 'Une erreur s\'est produite', 'validateEmail/validate-fail', );
+        res.redirect('https://www.needfor-school.com/');
+    }
+}
+
+/**
++ * Resends an email to the user for account validation.
++ *
++ * @param {Object} req - The request object.
++ * @param {Object} res - The response object.
++ * @return {Object} The response object with a message and status code.
++ */
+exports.resendEmail = async (req, res) => {
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Create rules
+    validateBody.emailValidator('email', true, false, true);
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    //Get user with email
+    const user = await User.findOne({ email: req.body.email });
+
+    //Check if user exist
+    if (!user) {
+        return res.status(404).json({ message: 'Utilisateur non trouvé', status: 404 });
+    }
+
+    // If the account is active, return error for validate to user
+    if (user.active !== false) {
+        return res.status(409).json({ message: 'Cet email est déjà validé', status : 409 });
+    }
+
+    //Pass in emaildata the information in email
+    const emailData = {
+        firstname: user.firstname,
+        email: user.email,
+        token : user.token,
+        emailService : process.env.EMAIL_SERVICE
+    }
+    try {
+        //Send email for validate to user
+        sendEmail(user.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
+        //Return succes message
+        res.status(200).json({ message: 'Email envoyé', status: 200 });
+    } catch (error) {
+        //If an error occurs, send an error message
+        sendEmail(user.email,  process.env.EMAIL_SENDER, 'Une erreur s\'est produite', 'validateEmail/validate-fail', emailData);
+        res.status(500).json({ message: error.message, status: 500 });
+    }
+}
+
 //////////
 //////////
 
@@ -195,6 +311,27 @@ exports.login = async (req, res) => {
 function generateRandomCode() {
     return Math.floor(1000000000 + Math.random() * 9000000000);
 }
+
+
+/**
++ * Validate email and token from email
++ *
++ * @param {string} email - email address to validate
++ * @param {string} token - token to validate
++ */
+function validateEmailAndToken(email, token) {
+    // Check if the email is valid
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        throw new Error('Invalid email address');
+    }
+  
+    // Check if the uuid is valdie
+    if (!isUuid(token)) {
+        throw new Error('Invalid token');
+    }
+  }
+  
 
 //////////
 //////////
