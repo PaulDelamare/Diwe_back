@@ -20,6 +20,7 @@ const TrackingRoute = require('./routes/trackingEmail.routes');
 //Require Task
 const cronTask = require('./tasks/cleanupUser');
 const deleteUserTask = require('./tasks/deleteUser');
+const deleteCode = require('./tasks/deleteCode');
 
 //Require Function
 const checkApiKey = require('./utils/checkApiKey');
@@ -95,6 +96,9 @@ cronTask();
 
 //Remove personnal information for users who have requested deletion more than 30 days ago.
 deleteUserTask();
+
+//Deletes all validation codes that are no longer valid and not used
+deleteCode();
 
 //////////
 //////////
