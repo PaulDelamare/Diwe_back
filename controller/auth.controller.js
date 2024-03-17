@@ -289,7 +289,7 @@ exports.verifyCode = async (req, res) => {
         // Send an email to indicate that a connection to the account has just taken place 
         await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Connexion à votre compte', 'twoFactor/connection-made', emailData);
 
-        const meal = await Meal.findOne({ id_user: user._id }).sort({ date: -1 });
+        const meal = await Meal.findOne({ id_user: user._id }, { _id: 0, __v: 0, id_user: 0 }).sort({ date: -1 });
 
         // Return user infromation
         res.status(200).json({
