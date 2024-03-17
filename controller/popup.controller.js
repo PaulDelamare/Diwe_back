@@ -46,7 +46,7 @@ exports.create = async (req, res) => {
         req.body.image_path = uploadImage(req.file)('uploads/dailyPopup/');
 
         //Create popup
-        await Popup.create(req.body, res);
+        await Popup.create(req.body);
 
         //If popup is create return success
         res.status(201).json({ 

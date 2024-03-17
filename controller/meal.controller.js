@@ -71,7 +71,7 @@ exports.create = async (req, res) => {
         req.body.id_user = user._id;
 
         //Create meal
-        await Meal.create(req.body, res);
+        await Meal.create(req.body);
 
         //If meal is create return success
         res.status(201).json({ message: "Le repas a été correctement enregistré", status : 201 });
@@ -118,7 +118,6 @@ exports.getLast = async (req, res) => {
      
     //If there is no errors
     try {
-
         // If the user is a doctor
         if (user.role === "health") {
             // Check if he has authorized 
@@ -133,7 +132,9 @@ exports.getLast = async (req, res) => {
         } 
         
         // Execute query
-        const recentMeals = await Meal.getLast(req, res);
+        const recentMeals = await Meal.find({ id_user: req.body.id_user })
+        .sort({ created_at: -1 }).select('image_path name calories proteins lipids glucids fibers calcium created_at')
+        .limit(req.body.number);
 
         //If meal are correctly find return success
         res.status(200).json({ meals: recentMeals, status: 200 });

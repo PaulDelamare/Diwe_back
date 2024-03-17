@@ -17,6 +17,7 @@ const bcrypt = require('bcryptjs');
 const RequestLink = require('../models/RequestLink');
 //Import Doctor model
 const Doctor = require('../models/Doctor');
+const uploadImage = require('../utils/uploadImage');
 
 //////////
 //////////

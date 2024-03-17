@@ -91,34 +91,6 @@ const User = mongoose.model('User', UserSchema, 'user');
 //////////
 
 //////////
-//FUNCTIONS
-
-User.create = async (newUser, resulte) => {
-    //Get body information
-    const {email,password, firstname, lastname, role, birthday, phone, secret_pin} = newUser;
-
-    //Create user object
-    const user = new User({
-        firstname,
-        lastname,
-        email,
-        password,
-        role,
-        birthday,
-        phone,
-        secret_pin,
-        created_at : new Date(),
-        active : false
-    });
-
-    //Push in data base
-    return user.save();
-}
-
-//////////
-//////////
-
-//////////
 //EXPORT
 module.exports = User;
 //////////

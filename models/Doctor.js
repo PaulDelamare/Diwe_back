@@ -1,7 +1,6 @@
 //////////
 //REQUIRE
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 //////////
 //////////
@@ -36,7 +35,8 @@ const DoctoSchema = new mongoose.Schema({
     },
     created_at:{
         type: Date,
-        required: true
+        required: true,
+        default: Date.now
     },
     updated_at:{
         type: Date,
@@ -55,38 +55,6 @@ const DoctoSchema = new mongoose.Schema({
 //MODEL
 
 const Doctor = mongoose.model('Doctor', DoctoSchema, 'doctor');
-
-//////////
-//////////
-
-//////////
-//FUNCTIONS
-
-/**
- * Creates a new Doctor in the database.
- *
- * @param {Object} newDoctor - The new doctor information
- * @param {Function} resulte - The callback function
- * @return {Promise} A Promise that resolves to the saved Doctor object
- */
-Doctor.create = async (newDoctor, resulte) => {
-    //Get body information
-    const {email, firstname, lastname, binding_code, id_user, phone} = newDoctor;
-
-    //Create Doctor object
-    const doctor = new Doctor({
-        firstname,
-        lastname,
-        email,
-        phone,
-        binding_code,
-        id_user,
-        created_at : new Date()
-    });
-
-    //Push in data base
-    return doctor.save();
-}
 
 //////////
 //////////
