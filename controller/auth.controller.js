@@ -184,7 +184,7 @@ exports.login = async (req, res) => {
             encoding: 'base32',
         });
 
-        // Add expiration time 
+        // Add expiration time in the next 10 minutes
         const codeExpiration = new Date();
         codeExpiration.setMinutes(codeExpiration.getMinutes() + 10);
 
