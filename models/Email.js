@@ -52,36 +52,6 @@ const Email = mongoose.model('Email', EmailSchema, 'email');
 //////////
 
 //////////
-//FUNCTIONS
-
-/**
-+ * Create a new email and save it in the database.
-+ *
-+ * @param {Object} newEmail - The new Email object containing image_path and text
-+ * @param {Object} resulte - The resulte object
-+ * @return {Promise} A promise that resolves to the saved daily_Email object
-+ */
-Email.create = async (newEmail, resulte) => {
-    //Get body information
-    const {subject, sender, recipient, body, attachment} = newEmail;
-
-    //Create Email object
-    const email = new Email({
-        subject,
-        sender,
-        recipient,
-        body,
-        attachment
-    });
-
-    //Push in data base
-    return email.save();
-}
-
-//////////
-//////////
-
-//////////
 //EXPORT
 module.exports = Email;
 //////////
