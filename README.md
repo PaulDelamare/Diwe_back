@@ -85,7 +85,7 @@ Response :
 
 ### Login
 
-`GET auth/login`
+`POST auth/login`
 
 Authentication :
 
@@ -97,15 +97,23 @@ Parameters:
 
 Body :
 
-| Name     | Type   | Description              |
-| -------- | ------ | ------------------------ |
-| email    | string | The email of the user    |
-| password | string | The password of the user |
+| Name     | Type   | Description       |
+| -------- | ------ | ----------------- |
+| email    | string | The user email    |
+| password | string | The user password |
 
 Response :
 
+> An email is send to user
+
 - 200
 
+```json
+{
+    "message": string,
+    "status":  number
+}
+```
 ```json
 {
     "access_token": string,
@@ -121,6 +129,69 @@ Response :
 ```
 
 - 401/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status depends on the error
+
+### Verify Code
+
+`POST auth/two-factor`
+
+Authentication :
+
+> No authentication
+
+Parameters:
+
+> No parameters
+
+Body :
+
+| Name  | Type   | Description            |
+| ----- | ------ | ---------------------- |
+| email | string | The user email         |
+| code  | number | The code send by email |
+
+Response :
+
+> An email is send to user
+
+- 200
+
+```json
+{
+    "access_token": string,
+    "user" : {
+        "fistname": string,
+        "lastname": string,
+        "email": string,
+        "role": string,
+        "phone": string,
+        "profile_picture": string,
+        "secret_pin": number,
+        "last_meal": {
+            "image_path": string,
+            "name": string,
+            "calories": number,
+            "proteins": number,
+            "lipids": number,
+            "glucids": number,
+            "fibers": 7number,
+            "calcium": number,
+            "created_at": Date
+        }
+    },
+    "status":  number
+}
+```
+
+- 400/422/500
 
 ```json
 {
