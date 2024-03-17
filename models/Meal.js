@@ -60,7 +60,7 @@ const Meal = mongoose.model('Meal', MealSchema, 'meal');
 /**
 + * Create a new popup and save it in the database.
 + *
-+ * @param {Object} newPopup - The new popup object containing image_path and text
++ * @param {Object} newMeal - The new popup object containing image_path and text
 + * @param {Object} resulte - The resulte object
 + * @return {Promise} A promise that resolves to the saved daily_popup object
 + */
@@ -85,6 +85,13 @@ Meal.create = async (newMeal, resulte) => {
     return meal.save();    
 }
 
+/**
++ * Get the last specified number of recent meals for a given user.
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Promise} a promise that resolves to the recent meals
++ */
 Meal.getLast = async (req, res) => {
     try {
         //Stock in variable limit
