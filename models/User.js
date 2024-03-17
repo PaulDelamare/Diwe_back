@@ -93,6 +93,13 @@ const User = mongoose.model('User', UserSchema, 'user');
 //////////
 //FUNCTIONS
 
+/**
++ * Create a new user with the given information.
++ *
++ * @param {Object} newUser - the new user information
++ * @param {Function} resulte - the callback function
++ * @return {Promise} a promise that resolves to the saved user object
++ */
 User.create = async (newUser, resulte) => {
     //Get body information
     const {email,password, firstname, lastname, role, birthday, phone, secret_pin} = newUser;
