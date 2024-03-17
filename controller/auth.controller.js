@@ -19,6 +19,7 @@ const { validate: isUuid, v4: uuidv4 } = require('uuid');
 const speakeasy = require('speakeasy');
 // Require verification code model
 const VerificationCode = require('../models/VerificationCode');
+const Meal = require('../models/Meal');
 //////////
 //////////
 
@@ -288,6 +289,8 @@ exports.verifyCode = async (req, res) => {
         // Send an email to indicate that a connection to the account has just taken place 
         await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Connexion à votre compte', 'twoFactor/connection-made', emailData);
 
+        const meal = await Meal.findOne({ id_user: user._id }).sort({ date: -1 });
+
         // Return user infromation
         res.status(200).json({
             access_token : token,
@@ -297,6 +300,9 @@ exports.verifyCode = async (req, res) => {
                 email : user.email,
                 role : user.role,
                 phone : user.phone,
+                profile_picture : user.profile_picture,
+                last_meal : meal ? meal : null,
+                secret_pin : user.secret_pin
             },
             status : 200
         });
