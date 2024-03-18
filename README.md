@@ -202,6 +202,48 @@ Response :
 
 > The message and the status depends on the error
 
+### Resend Login Code
+
+`POST auth/resend-code`
+
+Authentication :
+
+> No authentication
+
+Parameters:
+
+> No parameters
+
+Body :
+
+| Name  | Type   | Description            |
+| ----- | ------ | ---------------------- |
+| email | string | The user email         |
+
+Response :
+
+> An email is send to user
+
+- 200
+
+```json
+{
+    "message": string,
+    "status":  number
+}
+```
+
+- 400/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status depends on the error
+
 ### Resend Validation Email
 
 `POST auth/resend`

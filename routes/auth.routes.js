@@ -19,6 +19,8 @@ router.post('/auth/resend', AuthController.resendEmail);
 router.post('/auth/login', AuthController.login);
 //Router login
 router.post('/auth/two-factor', AuthController.verifyCode);
+//Resend login code
+router.post('/auth/resend-code', AuthController.resendCode);
 
 //////////
 //////////

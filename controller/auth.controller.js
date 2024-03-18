@@ -20,6 +20,7 @@ const speakeasy = require('speakeasy');
 // Require verification code model
 const VerificationCode = require('../models/VerificationCode');
 const Meal = require('../models/Meal');
+const generateCode = require('../utils/loginCode');
 //////////
 //////////
 
@@ -173,34 +174,8 @@ exports.login = async (req, res) => {
             return res.status(401).json({ errors: valideBody.array(), status: 401 });
         }
 
-        // If there is already one code, remove it
-        await VerificationCode.findOneAndDelete({ email: user.email });
-
-        //generate secret for the code
-        const secret = speakeasy.generateSecret({ length: 20 });
-        // Generate code
-        const verificationCode = speakeasy.totp({
-            secret: secret.base32,
-            encoding: 'base32',
-        });
-
-        // Add expiration time in the next 10 minutes
-        const codeExpiration = new Date();
-        codeExpiration.setMinutes(codeExpiration.getMinutes() + 10);
-
-        // Create code
-        await VerificationCode.create({
-            email: user.email,
-            code: verificationCode,
-            expiresAt: codeExpiration,
-        });
-
-        // Stock variable to pass in email
-        const emailData = {
-            firstname: user.firstname,
-            email: user.email,
-            code: verificationCode
-        }
+        // Function for create new code
+        const {emailData} = await generateCode(user);
 
         // Send email with code
         await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Code de verification', 'twoFactor/send-code', emailData);
@@ -263,8 +238,11 @@ exports.verifyCode = async (req, res) => {
             });
         }
 
+        // Check if the code is the same as the one in the database
+        const isValidCode = await bcrypt.compare(code, verificationCode.code);
+
         // If the code is not the same as the one in the database or the code has expired, return an error
-        if (verificationCode.code !== code || verificationCode.expiresAt < new Date()) {
+        if (!isValidCode || verificationCode.expiresAt < new Date()) {
             return res.status(400).json({
                 message: 'Code de vérification invalide ou expiré.',
                 status: 400,
@@ -310,6 +288,62 @@ exports.verifyCode = async (req, res) => {
     } catch (error) {
         // If an error occurs, send an error message
         res.status(500).json({ error : error, status : 500 });    
+    }
+}
+
+/**
++ * Resends a verification code to the user's email address.
++ *
++ * @param {Object} req - The request object.
++ * @param {Object} res - The response object.
++ * @return {Object} The response object with a success message or an error message.
++ */
+exports.resendCode = async (req, res) => {
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Create rules
+    validateBody.emailValidator('email', true, false, true);
+ 
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+ 
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    try {
+         // Check user information
+        //Get user with email
+        const user = await User.findOne({ email: req.body.email });
+
+        // If user account does not exist, return an error
+        if (!user) {
+            return res.status(400).json({
+                message: 'Aucun utilisateur trouvé avec cet email.',
+                status: 400,
+            });
+        }
+
+        console.log("here");
+        // Function for create new code
+        const {emailData} = await generateCode(user);
+ 
+        // Send email with code
+        await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Code de verification', 'twoFactor/send-code', emailData);
+ 
+        // return success
+        res.status(200).json({
+            message: 'Un code de vérification a été envoyé à votre adresse e-mail.',
+            status: 200,
+        });
+        
+    } catch (error) {
+        // If an error occurs, send an error message
+        res.status(500).json({ error : error, status : 500 });
     }
 }
 
