@@ -101,7 +101,7 @@ exports.getLast = async (req, res) => {
     const validateBody = new ValidateBody();
 
     //Check if calcium is correct
-    validateBody.numberValidator('number', true, 0);
+    validateBody.numberValidator('limit', true, 0);
 
     if (user.role === "health") {
         validateBody.validateObjectId('id_user',true);
@@ -134,7 +134,7 @@ exports.getLast = async (req, res) => {
         // Execute query
         const recentMeals = await Meal.find({ id_user: req.body.id_user })
         .sort({ created_at: -1 }).select('image_path name calories proteins lipids glucids fibers calcium created_at')
-        .limit(req.body.number);
+        .limit(req.body.limit);
 
         //If meal are correctly find return success
         res.status(200).json({ meals: recentMeals, status: 200 });

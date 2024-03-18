@@ -938,7 +938,7 @@ Body :
 
 | Name    | Type   | Description                               |
 | ------- | ------ | ----------------------------------------- |
-| number  | number | number of meals to collect (0 for all)    |
+| limit   | number | number of meals to collect (0 for all)    |
 | id_user | string | User id to consult (Only for health role) |
 
 Response : 
