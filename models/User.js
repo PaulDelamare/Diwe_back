@@ -75,7 +75,8 @@ const UserSchema = new mongoose.Schema({
     },
     token: {
         type: String,
-        default: uuidv4()
+        default: uuidv4(),
+        unique: true
     }
 });
 
