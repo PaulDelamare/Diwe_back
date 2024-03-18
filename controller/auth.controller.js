@@ -34,7 +34,7 @@ const generateCode = require('../utils/loginCode');
 + * @param {Object} res - The response object for sending the response
 + * @return {Object} JSON response with the status and message
 + */
-exports.create = async (req, res) => {
+exports.register = async (req, res) => {
 
     //Validation
     //Instance validateBody
