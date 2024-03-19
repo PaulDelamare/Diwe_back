@@ -73,6 +73,10 @@ const UserSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    prescription: {
+        type: String,
+        default: null
+    },
     token: {
         type: String,
         default: uuidv4(),
