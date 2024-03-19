@@ -4,6 +4,7 @@ const { validationResult, check } = require('express-validator');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { isValidObjectId } = require('mongoose');
+const path = require('path');
 //////////
 //////////
 
@@ -385,6 +386,50 @@ class ValidateBody{
         this._addValidationRule(validationRule);
     }
 
+    /**
+     * Validate a PDF file.
+     *
+     * @param {string} pdf - the key in body
+     * @param {boolean} require - whether the PDF is required
+     * @return {void}
+     */
+    pdfValidator(pdf, require = false) {
+        // Create rule
+        const validationRule = check(pdf);
+      
+        // Add basic rules for PDF (must be a PDF file)
+        validationRule.custom(async (value, { req }) => {
+            if (!req.file) {
+                // If PDF is not required and not present, consider it validated
+                if (require) {
+                    throw new Error('Le fichier PDF est obligatoire');
+                }
+                return true;
+            }
+      
+            // Check file type using file-type library
+            const { fileTypeFromBuffer } = await import('file-type');
+            const fileType = await fileTypeFromBuffer(req.file.buffer);
+            // Check in binary the document and throw error if is'nt a PDF
+            if (fileType === undefined || fileType.ext !== 'pdf') {
+                throw new Error('Le fichier doit être un document PDF');
+            }
+        
+            // Check file extension
+            const allowedExtensions = ['pdf'];
+            const fileExtension = path.extname(req.file.originalname).slice(1).toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+                throw new Error('L\'extension du fichier n\'est pas autorisée');
+            }
+            
+            //If the document is correct, consider it validated
+            return true;
+        });
+      
+        // Push rules in rules array
+        this._addValidationRule(validationRule);
+    }
+      
     //////////
     //////////
 

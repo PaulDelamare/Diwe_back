@@ -43,7 +43,7 @@ exports.create = async (req, res) => {
     try {
 
         //Upload image
-        req.body.image_path = uploadImage(req.file)('uploads/dailyPopup/');
+        req.body.image_path = uploadImage(req.file)('uploads/public/dailyPopup/');
 
         //Create popup
         await Popup.create(req.body);

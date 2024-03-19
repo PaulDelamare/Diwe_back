@@ -1,6 +1,5 @@
 //////////
 //REQUIRE
-
 //Import user model
 const User = require('../models/User');
 //Import popup model
@@ -17,8 +16,10 @@ const bcrypt = require('bcryptjs');
 const RequestLink = require('../models/RequestLink');
 //Import Doctor model
 const Doctor = require('../models/Doctor');
+//Import function for upload image
 const uploadImage = require('../utils/uploadImage');
-
+// Import function for crypt/decrypt
+const { cryptDocument, decryptDocument } = require('../utils/safeUpload');
 //////////
 //////////
 
@@ -118,7 +119,7 @@ exports.updateProfilePicture = async (req, res) => {
         }
 
         //Upload image
-        const imageFilePath = uploadImage(req.file)('uploads/profilePicture/');
+        const imageFilePath = uploadImage(req.file)('uploads/public/profilePicture/');
 
         //Update user profile picture
         await User.findByIdAndUpdate(user._id, { profile_picture: imageFilePath, updated_at: Date.now() }, { new: true });
@@ -492,6 +493,99 @@ exports.getDoctorLink = async (req, res) => {
     } catch (error) {
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des professionnels.', status: 500 });
+    }
+}
+
+exports.updatePrescription = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    // //Validation
+    const validateBody = new ValidateBody();
+
+     //Check if link code is correct
+    validateBody.pdfValidator('prescription', true);
+ 
+     //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+ 
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+
+    try {
+        // Transform the secret key in a buffer
+        const secretKey = Buffer.from(process.env.FILE_SECRET, 'hex');
+
+        // If a prescription already exists, delete it from the file system
+        if (user.prescription) {
+            // Get the path of the previous prescription
+            const previousPrescriptionPath = path.join(__dirname, '..', 'uploads', 'prescriptions', path.basename(user.prescription));
+            // Try delete if file exists
+            try {
+                // If the file existe, delete it
+                await fs.promises.access(previousPrescriptionPath);
+                await fs.promises.unlink(previousPrescriptionPath);
+            } catch (error) {
+                // Else log an error
+                console.error(`Error while deleting previous prescription: ${error.message}`);
+            }
+        }
+        
+        // Crypt the file
+        const encryptedFilePath = await cryptDocument(req.file.buffer, secretKey, user);
+
+        // Pass in User the prescription path
+        await User.findByIdAndUpdate(
+            user._id,
+            { prescription: encryptedFilePath },
+            { new: true }
+        );
+
+        // Send a success message
+        res.status(200).json({ message: 'Ordonnance modifé avec succès.', status: 200 });
+    } catch (error) {
+        console.log(error);
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de l\'ordonance.', status: 500 });
+    }
+}
+
+exports.getPrescription = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user || !user.prescription) {
+        return res.status(404).json({ error: 'Ordonnance non trouvée.', status : 404 });
+    }
+
+    try {
+        // Transform the secret key in a buffer
+        const secretKey = Buffer.from(process.env.FILE_SECRET, 'hex');
+
+        // Get the path of the prescription
+        const prescriptionPath = path.join(__dirname, '..', 'uploads', 'prescriptions', path.basename(user.prescription));
+
+        // Decrypt the file
+        const decryptedBuffer = await decryptDocument(prescriptionPath, secretKey);
+
+        // Send the file to the client in status 200 
+        res.status(200);
+        // Add in header the type of the file and the name
+        res.set('Content-Type', 'application/pdf');
+        res.set('Content-Disposition', `attachment; filename=${path.basename(user.prescription)}.pdf`);
+        // Send in pdf
+        res.send(decryptedBuffer);
+    } catch (error) {
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de l\'ordonnance.', status: 500 });
     }
 }
 
