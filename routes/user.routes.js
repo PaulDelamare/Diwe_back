@@ -35,8 +35,10 @@ router.post('/user/request-link', checkConnection(['user']), UserController.requ
 router.get('/user/request', checkConnection(['user']), UserController.findRequestLinkUser);
 //Get Doctor linked
 router.get('/user/doctor', checkConnection(['user']), UserController.getDoctorLink);
-//Add PDF 
+//Add prescription 
 router.put('/user/prescription', checkConnection(['user']), uploadPrescription, UserController.updatePrescription);
+//Get prescription
+router.get('/user/prescription', checkConnection(['user']), UserController.getPrescription);
 
 //////////
 //////////
