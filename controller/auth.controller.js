@@ -162,6 +162,10 @@ exports.login = async (req, res) => {
         //Get user with email
         const user = await User.findOne({ email: req.body.email });
 
+        if (!user.active) {
+            return res.status(401).json({ error: 'Le compte doit être activé avant de vous connecter.', status : 401, redirect: true });
+        }
+
         //Check if password is correct
         validateBody.checkPassword('password', user);
 
