@@ -133,7 +133,8 @@ Response :
 ```json
 {
   "error": string,
-  "status": number
+  "status": number,
+  "redirection"?: boolean
 }
 ```
 
@@ -719,6 +720,79 @@ Response :
     "status": number,
 }
 ```
+
+- 404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Update the Prescription
+
+`PUT user/prescription`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+| Name         | Type       | Description                     |
+| ------------ | ---------- | ------------------------------- |
+| prescription | file (pdf) | The prescription in pdf formaty |
+
+Response :
+
+- 200
+
+```json
+{
+    "message": string,
+    "status": number,
+}
+```
+
+- 401/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Get the Prescription
+
+`GET user/prescription`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response :
+
+- 200
+
+> Type de contenu : application/pdf
 
 - 404/500
 
