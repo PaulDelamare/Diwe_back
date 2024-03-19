@@ -5,6 +5,7 @@ const router = express.Router();
 //For receive information from form data
 const multer  = require('multer');
 const upload = multer().single('image');
+const uploadPrescription = multer().single('prescritpion');
 //Import controller
 const UserController = require('../controller/user.controller');
 //Import connection verification
@@ -33,7 +34,9 @@ router.post('/user/request-link', checkConnection(['user']), UserController.requ
 //Request link
 router.get('/user/request', checkConnection(['user']), UserController.findRequestLinkUser);
 //Get Doctor linked
-router.get('/user/doctor', checkConnection('user'), UserController.getDoctorLink);
+router.get('/user/doctor', checkConnection(['user']), UserController.getDoctorLink);
+//Add PDF 
+router.put('/user/prescription', checkConnection(['user']), uploadPrescription, UserController.updatePrescription);
 
 //////////
 //////////
