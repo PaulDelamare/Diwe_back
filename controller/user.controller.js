@@ -495,5 +495,41 @@ exports.getDoctorLink = async (req, res) => {
     }
 }
 
+exports.updatePrescription = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    // //Validation
+    const validateBody = new ValidateBody();
+
+     //Check if link code is correct
+    validateBody.pdfValidator('prescription', true);
+ 
+     //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+ 
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+    }
+
+    return res.status(200).json({ status: 200 });
+
+    try {
+        // If all is correct, update request_deletion
+        await User.findByIdAndUpdate(req.user._id, { pdf: req.body.pdf, updated_at: Date.now() });
+
+    } catch (error) {
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de l\'ordonance.', status: 500 });
+    }
+
+}
+
 //////////
 //////////
