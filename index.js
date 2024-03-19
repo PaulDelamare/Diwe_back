@@ -5,6 +5,7 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const helmet = require('helmet');
+const path = require('path');
 
 //Require route
 const AuthRoute = require('./routes/auth.routes');
@@ -49,6 +50,9 @@ app.use('/api', AuthEmailRoute);
 //////////
 //CONFIG API
 
+// Can access to uploads directory
+app.use('/uploads/public', express.static(path.join(__dirname, 'uploads/public')));
+
 //Check if the api key exist
 app.use(checkApiKey);
 
@@ -67,7 +71,6 @@ app.use(express.json());
 
 //Allows you to analyze complex data structures.
 app.use(express.urlencoded({extended:true}));
-
 
 //Initialise passport
 app.use(passport.initialize());
