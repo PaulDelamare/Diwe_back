@@ -65,7 +65,7 @@ exports.create = async (req, res) => {
     try {
 
         // Function for upload image
-        req.body.image_path = uploadImage(req.file)('uploads/meals/');
+        req.body.image_path = uploadImage(req.file)('uploads/public/meals/');
 
         //Add user id in body
         req.body.id_user = user._id;
