@@ -813,6 +813,41 @@ Response :
 
 > The message and the status error depends on the error
 
+### Delete Link
+
+`PUT user/delete-link/:id_delete`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> Forward request for user or doctor id to be removed in link
+
+Body :
+
+> No body
+
+Response :
+
+> Send an email to the user who has just had links removed
+
+- 200
+
+> Type de contenu : application/pdf
+
+- 400/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Doctor
 
 ### Get Request
