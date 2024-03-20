@@ -20,6 +20,7 @@ const Doctor = require('../models/Doctor');
 const uploadImage = require('../utils/uploadImage');
 // Import function for crypt/decrypt
 const { cryptDocument, decryptDocument } = require('../utils/safeUpload');
+const sendEmail = require('../utils/sendEmail');
 //////////
 //////////
 
@@ -308,10 +309,8 @@ exports.changeEmail = async (req, res) => {
     }
 }
 
-//CANCEL DELETE USER
-
 /**
-+ * Request deletion for the user with the given user ID in the request (JWT).
++ * Request/Cancel deletion for the user with the given user ID in the request (JWT).
 + *
 + * @param {Object} req - The request object
 + * @param {Object} res - The response object
@@ -329,9 +328,17 @@ exports.requestDeletion = async (req, res) => {
         //If all is correct, update request_deletion
         await User.findByIdAndUpdate(req.user._id, { request_deletion: user.request_deletion == null ? Date.now() : null, updated_at: Date.now() });
 
+        const emailData = {
+            firstname : user.firstname,
+            emailService : process.env.EMAIL_SERVICE,
+        }
+
+        await sendEmail(user.email,  process.env.EMAIL_SENDER, `Demande de suppression`, `${user.request_deletion == null ? 'user/request-deletion' : 'user/cancel-deletion'}`, emailData);
+
         //If all is correct, return message
         return res.status(200).json({ message: `Demande de suppression ${user.request_deletion == null ? 'envoyée avec succès.' : 'annulé'}`, status: 200 });
     }catch(e){
+        console.log(e)
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de suppression du compte', status: 500 });
     }  
