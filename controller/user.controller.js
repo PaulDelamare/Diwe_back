@@ -668,11 +668,11 @@ exports.deleteLink = async (req, res) => {
             if (!doctor) {
                 return res.status(404).json({ error: 'Professionnel non sélection.', status : 404 });
             }
-            // Pass in function his doctor id, id to delete (user id) and res for return status
-            const response = deleteLinkFunction(doctor._id)(id_delete)(res);
+            // // Pass in function his doctor id, id to delete (user id) and res for return status
+            const response = await deleteLinkFunction(doctor._id)(id_delete);
             // if the response status isn't 200 return error
             if (response.status !== 200) {
-                return response;
+                return res.status(response.status).json(response);
             }
             // Get user to delete information
             const userDelete = await User.findById(id_delete);
@@ -681,15 +681,16 @@ exports.deleteLink = async (req, res) => {
             emailData.user = doctor.email;
 
             // Send email
-            sendEmail(userDelete.email, process.env.EMAIL_SERVICE, `Votre lien avec le professionnel a été supprimé.`, 'user/delete-link', userDelete);
+            await sendEmail(userDelete.email, process.env.EMAIL_SERVICE, `Votre lien avec le professionnel a été supprimé.`, 'user/delete-link', emailData);
+
 
         }else{
             // If role is user
             // Pass in function id delete (doctor_id) his id and res
-            const response = deleteLinkFunction(id_delete)(user._id)(res);
+            const response = await deleteLinkFunction(id_delete)(user._id);
             // if the response status isn't 200 return error
             if (response.status !== 200) {
-                return response;
+                return res.status(response.status).json(response);
             }
             // Get user to delete information
             const userDelete = await Doctor.findById(id_delete);
@@ -698,7 +699,7 @@ exports.deleteLink = async (req, res) => {
             emailData.user = user.email;
 
             // Send email
-            sendEmail(userDelete.email, process.env.EMAIL_SERVICE, `Votre lien avec le professionnel a été supprimé.`, 'user/delete-link', userDelete);
+            await sendEmail(userDelete.email, process.env.EMAIL_SERVICE, `Votre lien avec le professionnel a été supprimé.`, 'user/delete-link', emailData);
         }
 
         // Id is valid, send a success message
