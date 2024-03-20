@@ -576,6 +576,15 @@ exports.updatePrescription = async (req, res) => {
             { new: true }
         );
 
+        // Pas custom data to email template
+        const emailData ={
+            firstname: user.firstname,
+            emailService: process.env.EMAIL_SERVICE,
+        }
+
+        //Send email
+        await sendEmail(user.email, process.env.EMAIL_SENDER, `Votre ordonnance a été modifiée`, 'user/change-prescription', emailData);
+
         // Send a success message
         res.status(200).json({ message: 'Ordonnance modifé avec succès.', status: 200 });
     } catch (error) {
