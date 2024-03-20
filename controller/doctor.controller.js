@@ -176,11 +176,7 @@ exports.validateRequestLink = async (req, res) => {
             emailService: process.env.EMAIL_SERVICE
         }
 
-        try {
-            await sendEmail(userRequest.email,  process.env.EMAIL_SENDER, `${req.body.validate ? 'Requête de liaison validé' : 'Requête de liaison refusé'}`, 'doctor/response-request', emailData);
-        } catch (error) {
-            console.log(error);
-        }
+        await sendEmail(userRequest.email,  process.env.EMAIL_SENDER, `${req.body.validate ? 'Requête de liaison validé' : 'Requête de liaison refusé'}`, 'doctor/response-request', emailData);
 
         // If the try is ok, return a JSON response
         return res.status(200).json({ message: `${req.body.validate ? 'La requête a été validé' : 'La requête a été refusé'}`, status : 200 });
