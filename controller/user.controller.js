@@ -20,6 +20,7 @@ const Doctor = require('../models/Doctor');
 const uploadImage = require('../utils/uploadImage');
 // Import function for crypt/decrypt
 const { cryptDocument, decryptDocument } = require('../utils/safeUpload');
+const sendEmail = require('../utils/sendEmail');
 //////////
 //////////
 
@@ -246,6 +247,15 @@ exports.changePassword = async (req, res) => {
             { new: true }
         );
 
+        // Pass the custom data to the email template
+        const emailData = {
+            firstname : user.firstname,
+            emailService : process.env.EMAIL_SERVICE,
+        }
+
+        // Send email
+        await sendEmail(user.email,  process.env.EMAIL_SENDER, `Mot de passe modifié`, 'user/change-password', emailData);
+
         // Return succes 
         return res.status(200).json({ message: 'Mot de passe changé avec succès.', status: 200 });
 
@@ -308,10 +318,8 @@ exports.changeEmail = async (req, res) => {
     }
 }
 
-//CANCEL DELETE USER
-
 /**
-+ * Request deletion for the user with the given user ID in the request (JWT).
++ * Request/Cancel deletion for the user with the given user ID in the request (JWT).
 + *
 + * @param {Object} req - The request object
 + * @param {Object} res - The response object
@@ -329,9 +337,19 @@ exports.requestDeletion = async (req, res) => {
         //If all is correct, update request_deletion
         await User.findByIdAndUpdate(req.user._id, { request_deletion: user.request_deletion == null ? Date.now() : null, updated_at: Date.now() });
 
+        //Pass in email the custom data
+        const emailData = {
+            firstname : user.firstname,
+            emailService : process.env.EMAIL_SERVICE,
+        }
+
+        // Send email for inform user of deletion
+        await sendEmail(user.email,  process.env.EMAIL_SENDER, `Demande de suppression`, `${user.request_deletion == null ? 'user/request-deletion' : 'user/cancel-deletion'}`, emailData);
+
         //If all is correct, return message
         return res.status(200).json({ message: `Demande de suppression ${user.request_deletion == null ? 'envoyée avec succès.' : 'annulé'}`, status: 200 });
     }catch(e){
+        console.log(e)
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de suppression du compte', status: 500 });
     }  
@@ -391,6 +409,16 @@ exports.requestLink = async (req, res) => {
     try{
         //If all is correct create request
         await RequestLink.create({ id_user: user._id, id_doctor: doctor._id });
+
+        //Pass in email the custom data
+        const emailData = {
+            firstname : doctor.firstname,
+            user: user.email,
+            emailService : process.env.EMAIL_SERVICE,
+        }
+
+        //Send email
+        await sendEmail(doctor.email,  process.env.EMAIL_SENDER, `Demande de liaison de compte`, 'doctor/request-link', emailData);
 
         //If all is correct, return message
         return res.status(201).json({ message: `Votre demande de liaison de compte a bien été enregistré`, status: 201 });
@@ -547,6 +575,15 @@ exports.updatePrescription = async (req, res) => {
             { prescription: encryptedFilePath },
             { new: true }
         );
+
+        // Pas custom data to email template
+        const emailData ={
+            firstname: user.firstname,
+            emailService: process.env.EMAIL_SERVICE,
+        }
+
+        //Send email
+        await sendEmail(user.email, process.env.EMAIL_SENDER, `Votre ordonnance a été modifiée`, 'user/change-prescription', emailData);
 
         // Send a success message
         res.status(200).json({ message: 'Ordonnance modifé avec succès.', status: 200 });

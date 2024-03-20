@@ -9,6 +9,7 @@ const ValidateBody = require('../utils/validateBody');
 //Import Request link model
 const RequestLink = require('../models/RequestLink');
 const { isValidObjectId } = require('mongoose');
+const sendEmail = require('../utils/sendEmail');
 //////////
 //////////
 
@@ -149,10 +150,11 @@ exports.validateRequestLink = async (req, res) => {
     //////////
 
     // Check if user already link
-    const alreadyLink = doctor.users_link.includes(requestValidate.id_user);
+    const doctorLink = doctor.users_link.includes(requestValidate.id_user);
+    const userLink = userRequest.doctors_link.includes(doctor._id);
 
     // If the user already link, return an error
-    if (alreadyLink) {
+    if (doctorLink || userLink) {
         return res.status(401).json({ error: 'Vous êtes déjà lié.', status : 401 });
     }
 
@@ -166,6 +168,16 @@ exports.validateRequestLink = async (req, res) => {
             await Doctor.updateOne({ _id: doctor._id }, { $push: { users_link: requestValidate.id_user } });
             await User.updateOne({ _id: requestValidate.id_user }, { $push: { doctors_link: doctor._id } });
         }
+        // Pass the custom data to the email template
+        const emailData = {
+            firstname: userRequest.firstname,
+            doctor: doctor.email,
+            accepted : req.body.validate ? 'a été acceptée' : 'a été refusée',
+            emailService: process.env.EMAIL_SERVICE
+        }
+
+        // Send email for inform user that he has been linked with doctor
+        await sendEmail(userRequest.email,  process.env.EMAIL_SENDER, `${req.body.validate ? 'Requête de liaison validé' : 'Requête de liaison refusé'}`, 'doctor/response-request', emailData);
 
         // If the try is ok, return a JSON response
         return res.status(200).json({ message: `${req.body.validate ? 'La requête a été validé' : 'La requête a été refusé'}`, status : 200 });
