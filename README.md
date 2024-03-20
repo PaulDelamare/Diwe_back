@@ -343,6 +343,8 @@ Body :
 
 Response :
 
+> An email is send to the user
+
 - 200 
 
 ```json
@@ -574,6 +576,8 @@ Body :
 
 Response :
 
+> An email is send
+
 - 200 
 
 ```json
@@ -613,6 +617,8 @@ Body :
 | link_code | string | The user firstname |
 
 Response :
+
+> An email is send to the doctor
 
 - 201
 
@@ -752,6 +758,8 @@ Body :
 
 Response :
 
+> An email is send to the user
+
 - 200
 
 ```json
@@ -877,6 +885,8 @@ Body :
 | validate | boolean | The response request (true for accept and false for refuse) |
 
 Response :
+
+> An email is send to the user
 
 - 200
 
