@@ -168,7 +168,7 @@ exports.validateRequestLink = async (req, res) => {
             await Doctor.updateOne({ _id: doctor._id }, { $push: { users_link: requestValidate.id_user } });
             await User.updateOne({ _id: requestValidate.id_user }, { $push: { doctors_link: doctor._id } });
         }
-        
+        // Pass the custom data to the email template
         const emailData = {
             firstname: userRequest.firstname,
             doctor: doctor.email,
@@ -176,6 +176,7 @@ exports.validateRequestLink = async (req, res) => {
             emailService: process.env.EMAIL_SERVICE
         }
 
+        // Send email for inform user that he has been linked with doctor
         await sendEmail(userRequest.email,  process.env.EMAIL_SENDER, `${req.body.validate ? 'Requête de liaison validé' : 'Requête de liaison refusé'}`, 'doctor/response-request', emailData);
 
         // If the try is ok, return a JSON response
