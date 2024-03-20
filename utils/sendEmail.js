@@ -16,7 +16,8 @@ require('dotenv').config();
 /**
 + * Sends an email with the specified content and attachments.
 + *
-+ * @param {string} to - The email address to send the email to
++ * @param {string} to - The email address who receive the email to
++ * @param {string} sender - The email address who send the email to
 + * @param {string} subject - The subject line of the email
 + * @param {string} templateName - The name of the email template to use
 + * @param {object} data - The data to insert into the email template
