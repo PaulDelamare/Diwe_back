@@ -20,7 +20,11 @@ const Doctor = require('../models/Doctor');
 const uploadImage = require('../utils/uploadImage');
 // Import function for crypt/decrypt
 const { cryptDocument, decryptDocument } = require('../utils/safeUpload');
+//Import dunction for send email
 const sendEmail = require('../utils/sendEmail');
+// Import function for valiodate id
+const { isValidObjectId } = require('mongoose');
+const deleteLinkFunction = require('../utils/deleteLink');
 //////////
 //////////
 
@@ -623,6 +627,86 @@ exports.getPrescription = async (req, res) => {
     } catch (error) {
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de l\'ordonnance.', status: 500 });
+    }
+}
+
+/**
++ * Deletes a link based on the provided ID.
++ *
++ * @param {Object} req - The request object.
++ * @param {Object} res - The response object.
++ * @return {Promise<Object>} The response object with a success message or an error message.
++ */
+exports.deleteLink = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    // Get id to delete (can be an doctor id or user id)
+    const id_delete = req.params.id_delete;
+
+    // Check if the id is valid
+    if (!isValidObjectId(id_delete)) {
+        return res.status(404).json({ error: 'Identifiant non valide id.', status : 404 });
+    }
+    // If all is valid
+    try {
+
+        // Create object to pass in email template
+        let emailData={
+            emailService: process.env.EMAIL_SERVICE,
+        }
+        // If user role is health
+        if (user.role === "health") {
+            // Find his doctor id
+            const doctor = await Doctor.findOne({id_user : user._id});
+            // return an error if the doctor it not exist
+            if (!doctor) {
+                return res.status(404).json({ error: 'Professionnel non sélection.', status : 404 });
+            }
+            // // Pass in function his doctor id, id to delete (user id) and res for return status
+            const response = await deleteLinkFunction(doctor._id)(id_delete);
+            // if the response status isn't 200 return error
+            if (response.status !== 200) {
+                return res.status(response.status).json(response);
+            }
+            // Get user to delete information
+            const userDelete = await User.findById(id_delete);
+            // Pass custom data to email template
+            emailData.firstname = userDelete.firstname;
+            emailData.user = doctor.email;
+
+            // Send email
+            await sendEmail(userDelete.email, process.env.EMAIL_SERVICE, `Votre lien avec le professionnel a été supprimé.`, 'user/delete-link', emailData);
+
+
+        }else{
+            // If role is user
+            // Pass in function id delete (doctor_id) his id and res
+            const response = await deleteLinkFunction(id_delete)(user._id);
+            // if the response status isn't 200 return error
+            if (response.status !== 200) {
+                return res.status(response.status).json(response);
+            }
+            // Get user to delete information
+            const userDelete = await Doctor.findById(id_delete);
+            // Pass custom data to email template
+            emailData.firstname = userDelete.firstname;
+            emailData.user = user.email;
+
+            // Send email
+            await sendEmail(userDelete.email, process.env.EMAIL_SERVICE, `Votre lien avec le professionnel a été supprimé.`, 'user/delete-link', emailData);
+        }
+
+        // Id is valid, send a success message
+        return res.status(200).json({ message: 'Lien supprimé avec succès.', status: 200 });
+    } catch (error) {
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la suppression du lien.', status: 500 });
     }
 }
 
