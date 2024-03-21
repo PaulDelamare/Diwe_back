@@ -19,7 +19,7 @@ const Doctor = require('../models/Doctor');
 //Import function for upload image
 const uploadImage = require('../utils/uploadImage');
 // Import function for crypt/decrypt
-const { cryptDocument, decryptDocument } = require('../utils/safeUpload');
+const { cryptDocument, decryptFile } = require('../utils/safeUpload');
 //Import dunction for send email
 const sendEmail = require('../utils/sendEmail');
 // Import function for valiodate id
@@ -386,7 +386,7 @@ exports.requestLink = async (req, res) => {
 
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
 
     // Find Doctor who have the same link_code
@@ -537,7 +537,7 @@ exports.updatePrescription = async (req, res) => {
         return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
     }
 
-    // //Validation
+    //Validation
     const validateBody = new ValidateBody();
 
      //Check if link code is correct
@@ -548,7 +548,7 @@ exports.updatePrescription = async (req, res) => {
  
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
 
     try {
@@ -571,7 +571,7 @@ exports.updatePrescription = async (req, res) => {
         }
         
         // Crypt the file
-        const encryptedFilePath = await cryptDocument(req.file.buffer, secretKey, user);
+        const encryptedFilePath = await cryptDocument(req.file.buffer, secretKey, user, 'uploads/prescriptions','_prescription.enc');
 
         // Pass in User the prescription path
         await User.findByIdAndUpdate(
@@ -608,14 +608,9 @@ exports.getPrescription = async (req, res) => {
     }
 
     try {
-        // Transform the secret key in a buffer
-        const secretKey = Buffer.from(process.env.FILE_SECRET, 'hex');
-
-        // Get the path of the prescription
-        const prescriptionPath = path.join(__dirname, '..', 'uploads', 'prescriptions', path.basename(user.prescription));
 
         // Decrypt the file
-        const decryptedBuffer = await decryptDocument(prescriptionPath, secretKey);
+        const decryptedBuffer = await  decryptFile('uploads/prescriptions', user.prescription);
 
         // Send the file to the client in status 200 
         res.status(200);
@@ -651,7 +646,7 @@ exports.deleteLink = async (req, res) => {
 
     // Check if the id is valid
     if (!isValidObjectId(id_delete)) {
-        return res.status(404).json({ error: 'Identifiant non valide id.', status : 404 });
+        return res.status(400).json({ error: 'Identifiant non valide id.', status : 400 });
     }
     // If all is valid
     try {
@@ -666,7 +661,7 @@ exports.deleteLink = async (req, res) => {
             const doctor = await Doctor.findOne({id_user : user._id});
             // return an error if the doctor it not exist
             if (!doctor) {
-                return res.status(404).json({ error: 'Professionnel non sélection.', status : 404 });
+                return res.status(404).json({ error: 'Professionnel non trouvé.', status : 404 });
             }
             // // Pass in function his doctor id, id to delete (user id) and res for return status
             const response = await deleteLinkFunction(doctor._id)(id_delete);

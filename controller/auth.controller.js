@@ -333,7 +333,6 @@ exports.resendCode = async (req, res) => {
             });
         }
 
-        console.log("here");
         // Function for create new code
         const {emailData} = await generateCode(user);
  

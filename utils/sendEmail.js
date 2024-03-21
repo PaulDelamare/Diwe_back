@@ -45,7 +45,7 @@ async function sendEmail(to, sender, subject, templateName, data, attachments = 
     const recipients = to.split(',').map(email => email.trim());
 
     // Stock attchments path in variable 
-    const attachmentsPath = attachments.map(attachment => attachment.path);
+    const attachmentsPath = attachments.map(attachment => attachment.encryptedPath);
 
     // For each recipient send an email
     for (const recipient of recipients) {

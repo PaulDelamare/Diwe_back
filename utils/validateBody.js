@@ -198,15 +198,15 @@ class ValidateBody{
 +     *
 +     * @param {string} secret_pin - the key in body
 +     * @param {boolean} require - is require in body or not
-+     * @param {number} lenght - lenght of secret pin
++     * @param {number} length - length of secret pin
 +     * @return {void}
 +     */
-    secretPinValidator(secret_pin, require, lenght){
+    secretPinValidator(secret_pin, require, length){
         // Create rule
         const validationRule = check(secret_pin);
 
         // Add basic rules for secret_pin (must be a number with a regulated size)
-        validationRule.isNumeric().withMessage('Le code secret doit être un nombre').isLength({ min: lenght, max: lenght }).withMessage('Le code secret doit avoir exactement 6 chiffres');
+        validationRule.isNumeric().withMessage('Le code secret doit être un nombre').isLength({ min: length, max: length }).withMessage('Le code secret doit avoir exactement 6 chiffres');
 
         // Add conditionnal rules (require or not)
         if (require) {
@@ -255,7 +255,7 @@ class ValidateBody{
         const validationRule = check(image);
 
         // Add basic rules for image (must be an image file)
-        validationRule.custom((value, { req }) => {
+        validationRule.custom(async (value, { req }) => {
             if (!req.file) {
                 // If image is not required and not present, consider it validated
                 if (require) {
@@ -263,11 +263,23 @@ class ValidateBody{
                 }
                 return true; 
             }
+            // Check file type with file-type
+            const { fileTypeFromBuffer } = await import('file-type');
+            const fileType = await fileTypeFromBuffer(req.file.buffer);
             // Add more mime types as needed
             const allowedMimeTypes = ['image/jpeg', 'image/png'];
-            if (!allowedMimeTypes.includes(req.file.mimetype)) {
-                throw new Error('Le fichier doit être une image de type JPEG ou PNG');
+            if (!allowedMimeTypes.includes(fileType.mime)) {
+                throw new Error('Le fichier doit être une image de type JPEG, PNG ou JPG');
             }
+
+            // Check file extension
+            const allowedExtensions = ['jpg', 'jpeg', 'png'];
+            const fileExtension = path.extname(req.file.originalname).slice(1).toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+                throw new Error('L\'extension du fichier n\'est pas autorisée');
+            }
+
+            // If is valid, return true
             return true;
         });
 
@@ -387,42 +399,50 @@ class ValidateBody{
     }
 
     /**
-     * Validate a PDF file.
+     * Validate a PDF files.
      *
      * @param {string} pdf - the key in body
      * @param {boolean} require - whether the PDF is required
      * @return {void}
      */
-    pdfValidator(pdf, require = false) {
+    pdfValidator(pdfs, require = false) {
         // Create rule
-        const validationRule = check(pdf);
+        const validationRule = check(pdfs);
       
         // Add basic rules for PDF (must be a PDF file)
         validationRule.custom(async (value, { req }) => {
-            if (!req.file) {
+            
+            // Create array for push files in
+            let files = req.files ?? [req.file];
+
+            // If there are no file
+            if (files.length === 0) {
                 // If PDF is not required and not present, consider it validated
                 if (require) {
-                    throw new Error('Le fichier PDF est obligatoire');
+                    throw new Error('Au moins un fichier PDF est obligatoire');
                 }
                 return true;
             }
       
-            // Check file type using file-type library
-            const { fileTypeFromBuffer } = await import('file-type');
-            const fileType = await fileTypeFromBuffer(req.file.buffer);
-            // Check in binary the document and throw error if is'nt a PDF
-            if (fileType === undefined || fileType.ext !== 'pdf') {
-                throw new Error('Le fichier doit être un document PDF');
-            }
+            // Check each file in the array
+            for (const file of files) {
+                // Check file type using file-type library
+                const { fileTypeFromBuffer } = await import('file-type');
+                const fileType = await fileTypeFromBuffer(file.buffer);
+                // Check in binary the document and throw error if isn't a PDF
+                if (fileType === undefined || fileType.ext !== 'pdf') {
+                    throw new Error('Tous les fichiers doivent être des documents PDF');
+                }
         
-            // Check file extension
-            const allowedExtensions = ['pdf'];
-            const fileExtension = path.extname(req.file.originalname).slice(1).toLowerCase();
-            if (!allowedExtensions.includes(fileExtension)) {
-                throw new Error('L\'extension du fichier n\'est pas autorisée');
+                // Check file extension
+                const allowedExtensions = ['pdf'];
+                const fileExtension = path.extname(file.originalname).slice(1).toLowerCase();
+                // If extension is not allowed
+                if (!allowedExtensions.includes(fileExtension)) {
+                    throw new Error('L\'extension du fichier n\'est pas autorisée');
+                }
             }
-            
-            //If the document is correct, consider it validated
+            // If all files are correct, consider them validated
             return true;
         });
       

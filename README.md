@@ -1134,6 +1134,56 @@ Response :
 
 > The message and the status error depends on the error
 
+## Email
+
+### Send email
+
+`POST sendEmail`
+
+Authentication :
+
+> Jwt token require and only blog role can use it
+
+Parameters :
+
+> No parameters
+
+Body :
+
+- Data must be sent as FormData.
+
+| Name         | Type    | Description                                                   |
+| ------------ | ------- | ------------------------------------------------------------- |
+| files        | files   | Files to send (optionnal)                                     |
+| prescription | boolean | If user want to send prescription (only for user)             |
+| email        | string  | Recipients separe recipient with "," if there are more than 1 |
+| subject      | string  | Email subject                                                 |
+| body         | string  | Email body                                                    |
+
+Response : 
+
+> An email is send
+
+- 201
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup

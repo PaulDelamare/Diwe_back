@@ -111,7 +111,7 @@ exports.validateRequestLink = async (req, res) => {
 
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
 
     //////////
@@ -155,7 +155,7 @@ exports.validateRequestLink = async (req, res) => {
 
     // If the user already link, return an error
     if (doctorLink || userLink) {
-        return res.status(401).json({ error: 'Vous êtes déjà lié.', status : 401 });
+        return res.status(409).json({ error: 'Vous êtes déjà lié.', status : 409 });
     }
 
     try {
