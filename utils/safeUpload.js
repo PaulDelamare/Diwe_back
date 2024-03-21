@@ -10,7 +10,7 @@ const path = require('path');
 + * @param {Object} user - The user object associated with the document
 + * @return {string} The path to the encrypted document saved on disk
 + */
-exports.cryptDocument = async (buffer, secretKey, user) => {
+exports.cryptDocument = async (buffer, secretKey, user, pathApi, pathAfter) => {
     // Initalize vector
     const iv = crypto.randomBytes(16);
 
@@ -24,8 +24,11 @@ exports.cryptDocument = async (buffer, secretKey, user) => {
     // Combines vector initialization and encrypted buffer
     const encryptedDocument = Buffer.concat([iv, encryptedBuffer]);
 
+    // Create date for pass get time for have only one file with the same name
+    const date = new Date();
+
     // Creates a path to save the encrypted document to disk
-    const encryptedFilePath = path.join(__dirname, '..', 'uploads', 'prescriptions', `${user._id}_prescription.enc`);
+    const encryptedFilePath = path.join(__dirname, '..', pathApi, `${date.getTime()}${user._id}${pathAfter}`);
 
     // Saves the encrypted document to disk
     await fs.promises.writeFile(encryptedFilePath, encryptedDocument);
