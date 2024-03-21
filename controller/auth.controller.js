@@ -162,10 +162,6 @@ exports.login = async (req, res) => {
         //Get user with email
         const user = await User.findOne({ email: req.body.email });
 
-        if (!user.active) {
-            return res.status(401).json({ error: 'Le compte doit être activé avant de vous connecter.', status : 401, redirect: true });
-        }
-
         //Check if password is correct
         validateBody.checkPassword('password', user);
 
@@ -176,6 +172,11 @@ exports.login = async (req, res) => {
         if (!valideBody.isEmpty()) {
             // Return a JSON response with the determined status code
             return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        }
+
+        // If account user is valide but not active
+        if (!user.active) {
+            return res.status(401).json({ error: 'Le compte doit être activé avant de vous connecter.', status : 401, redirect: true });
         }
 
         // Function for create new code
