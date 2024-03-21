@@ -387,42 +387,59 @@ class ValidateBody{
     }
 
     /**
-     * Validate a PDF file.
+     * Validate a PDF files.
      *
      * @param {string} pdf - the key in body
      * @param {boolean} require - whether the PDF is required
      * @return {void}
      */
-    pdfValidator(pdf, require = false) {
+    pdfValidator(pdfs, require = false) {
         // Create rule
-        const validationRule = check(pdf);
+        const validationRule = check(pdfs);
       
         // Add basic rules for PDF (must be a PDF file)
         validationRule.custom(async (value, { req }) => {
-            if (!req.file) {
+            
+            // Create array for push files in
+            let files = [];
+
+            // If there is only one file
+            if (req.file) {
+                // Push file in array
+                files.push(req.file);
+            }else if(req.files) {
+                // If there are more than 1 file in the array
+                files = req.files
+            }
+
+            // If there are no file
+            if (files.lenght === 0) {
                 // If PDF is not required and not present, consider it validated
                 if (require) {
-                    throw new Error('Le fichier PDF est obligatoire');
+                    throw new Error('Au moins un fichier PDF est obligatoire');
                 }
                 return true;
             }
       
-            // Check file type using file-type library
-            const { fileTypeFromBuffer } = await import('file-type');
-            const fileType = await fileTypeFromBuffer(req.file.buffer);
-            // Check in binary the document and throw error if is'nt a PDF
-            if (fileType === undefined || fileType.ext !== 'pdf') {
-                throw new Error('Le fichier doit être un document PDF');
-            }
+            // Check each file in the array
+            for (const file of files) {
+                // Check file type using file-type library
+                const { fileTypeFromBuffer } = await import('file-type');
+                const fileType = await fileTypeFromBuffer(file.buffer);
+                // Check in binary the document and throw error if isn't a PDF
+                if (fileType === undefined || fileType.ext !== 'pdf') {
+                    throw new Error('Tous les fichiers doivent être des documents PDF');
+                }
         
-            // Check file extension
-            const allowedExtensions = ['pdf'];
-            const fileExtension = path.extname(req.file.originalname).slice(1).toLowerCase();
-            if (!allowedExtensions.includes(fileExtension)) {
-                throw new Error('L\'extension du fichier n\'est pas autorisée');
+                // Check file extension
+                const allowedExtensions = ['pdf'];
+                const fileExtension = path.extname(file.originalname).slice(1).toLowerCase();
+                // If extension is not allowed
+                if (!allowedExtensions.includes(fileExtension)) {
+                    throw new Error('L\'extension du fichier n\'est pas autorisée');
+                }
             }
-            
-            //If the document is correct, consider it validated
+            // If all files are correct, consider them validated
             return true;
         });
       
