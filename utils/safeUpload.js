@@ -41,7 +41,7 @@ exports.cryptDocument = async (buffer, secretKey, user) => {
 + * @param {string} secretKey - The secret key used for decryption.
 + * @return {Buffer} The decrypted document buffer.
 + */
-exports.decryptDocument = async (encryptedFilePath, secretKey) => {
+exports.decryptFunction = async (encryptedFilePath, secretKey) => {
     // Reads the encrypted document from disk
     const encryptedDocument = await fs.promises.readFile(encryptedFilePath);
   
@@ -58,4 +58,26 @@ exports.decryptDocument = async (encryptedFilePath, secretKey) => {
   
     // Returns the decrypted document buffer
     return decryptedBuffer;
+}
+
+/**
++ * Decrypts a file using a secret key and returns the decrypted buffer.
++ *
++ * @param {string} pathApi - The path of the API.
++ * @param {string} cryptPath - The path of the crypt file.
++ * @return {Promise<Buffer>} The decrypted buffer.
++ */
+exports.decryptFile = async (pathApi, cryptPath) => {
+
+    // Transform the secret key in a buffer
+    const secretKey = Buffer.from(process.env.FILE_SECRET, 'hex');
+
+    // Get the path of the crypt file
+    const prescriptionPath = path.join(__dirname, '..', pathApi, path.basename(cryptPath));
+
+    // Decrypt the file
+    const decryptedBuffer = await this.decryptFunction(prescriptionPath, secretKey);
+
+    // return file
+    return decryptedBuffer
 }
