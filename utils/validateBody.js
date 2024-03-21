@@ -255,7 +255,7 @@ class ValidateBody{
         const validationRule = check(image);
 
         // Add basic rules for image (must be an image file)
-        validationRule.custom((value, { req }) => {
+        validationRule.custom(async (value, { req }) => {
             if (!req.file) {
                 // If image is not required and not present, consider it validated
                 if (require) {
@@ -263,11 +263,23 @@ class ValidateBody{
                 }
                 return true; 
             }
+            // Check file type with file-type
+            const { fileTypeFromBuffer } = await import('file-type');
+            const fileType = await fileTypeFromBuffer(req.file.buffer);
             // Add more mime types as needed
             const allowedMimeTypes = ['image/jpeg', 'image/png'];
-            if (!allowedMimeTypes.includes(req.file.mimetype)) {
-                throw new Error('Le fichier doit être une image de type JPEG ou PNG');
+            if (!allowedMimeTypes.includes(fileType.mime)) {
+                throw new Error('Le fichier doit être une image de type JPEG, PNG ou JPG');
             }
+
+            // Check file extension
+            const allowedExtensions = ['jpg', 'jpeg', 'png'];
+            const fileExtension = path.extname(req.file.originalname).slice(1).toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+                throw new Error('L\'extension du fichier n\'est pas autorisée');
+            }
+
+            // If is valid, return true
             return true;
         });
 
@@ -401,16 +413,7 @@ class ValidateBody{
         validationRule.custom(async (value, { req }) => {
             
             // Create array for push files in
-            let files = [];
-
-            // If there is only one file
-            if (req.file) {
-                // Push file in array
-                files.push(req.file);
-            }else if(req.files) {
-                // If there are more than 1 file in the array
-                files = req.files
-            }
+            let files = req.files ?? [req.file];
 
             // If there are no file
             if (files.length === 0) {
