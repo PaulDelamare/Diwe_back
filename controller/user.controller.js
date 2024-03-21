@@ -19,7 +19,7 @@ const Doctor = require('../models/Doctor');
 //Import function for upload image
 const uploadImage = require('../utils/uploadImage');
 // Import function for crypt/decrypt
-const { cryptDocument, decryptDocument } = require('../utils/safeUpload');
+const { cryptDocument, decryptFile } = require('../utils/safeUpload');
 //Import dunction for send email
 const sendEmail = require('../utils/sendEmail');
 // Import function for valiodate id
@@ -537,7 +537,7 @@ exports.updatePrescription = async (req, res) => {
         return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
     }
 
-    // //Validation
+    //Validation
     const validateBody = new ValidateBody();
 
      //Check if link code is correct
@@ -608,14 +608,9 @@ exports.getPrescription = async (req, res) => {
     }
 
     try {
-        // Transform the secret key in a buffer
-        const secretKey = Buffer.from(process.env.FILE_SECRET, 'hex');
-
-        // Get the path of the prescription
-        const prescriptionPath = path.join(__dirname, '..', 'uploads', 'prescriptions', path.basename(user.prescription));
 
         // Decrypt the file
-        const decryptedBuffer = await decryptDocument(prescriptionPath, secretKey);
+        const decryptedBuffer = await  decryptFile('uploads/prescriptions', user.prescription);
 
         // Send the file to the client in status 200 
         res.status(200);
