@@ -413,7 +413,7 @@ class ValidateBody{
             }
 
             // If there are no file
-            if (files.lenght === 0) {
+            if (files.length === 0) {
                 // If PDF is not required and not present, consider it validated
                 if (require) {
                     throw new Error('Au moins un fichier PDF est obligatoire');
