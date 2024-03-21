@@ -58,7 +58,7 @@ exports.create = async (req, res) => {
     // Check for validation errors
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
      
     //If there is no errors
@@ -113,7 +113,7 @@ exports.getLast = async (req, res) => {
     // Check for validation errors
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
      
     //If there is no errors
