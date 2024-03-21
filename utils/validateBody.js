@@ -198,15 +198,15 @@ class ValidateBody{
 +     *
 +     * @param {string} secret_pin - the key in body
 +     * @param {boolean} require - is require in body or not
-+     * @param {number} lenght - lenght of secret pin
++     * @param {number} length - length of secret pin
 +     * @return {void}
 +     */
-    secretPinValidator(secret_pin, require, lenght){
+    secretPinValidator(secret_pin, require, length){
         // Create rule
         const validationRule = check(secret_pin);
 
         // Add basic rules for secret_pin (must be a number with a regulated size)
-        validationRule.isNumeric().withMessage('Le code secret doit être un nombre').isLength({ min: lenght, max: lenght }).withMessage('Le code secret doit avoir exactement 6 chiffres');
+        validationRule.isNumeric().withMessage('Le code secret doit être un nombre').isLength({ min: length, max: length }).withMessage('Le code secret doit avoir exactement 6 chiffres');
 
         // Add conditionnal rules (require or not)
         if (require) {
