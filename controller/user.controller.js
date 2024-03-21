@@ -386,7 +386,7 @@ exports.requestLink = async (req, res) => {
 
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
 
     // Find Doctor who have the same link_code
@@ -548,7 +548,7 @@ exports.updatePrescription = async (req, res) => {
  
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
-        return res.status(401).json({ errors: valideBody.array(), status: 401 });
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
 
     try {
@@ -571,7 +571,7 @@ exports.updatePrescription = async (req, res) => {
         }
         
         // Crypt the file
-        const encryptedFilePath = await cryptDocument(req.file.buffer, secretKey, user);
+        const encryptedFilePath = await cryptDocument(req.file.buffer, secretKey, user, 'uploads/prescriptions','_prescription.enc');
 
         // Pass in User the prescription path
         await User.findByIdAndUpdate(
@@ -646,7 +646,7 @@ exports.deleteLink = async (req, res) => {
 
     // Check if the id is valid
     if (!isValidObjectId(id_delete)) {
-        return res.status(404).json({ error: 'Identifiant non valide id.', status : 404 });
+        return res.status(400).json({ error: 'Identifiant non valide id.', status : 400 });
     }
     // If all is valid
     try {
@@ -661,7 +661,7 @@ exports.deleteLink = async (req, res) => {
             const doctor = await Doctor.findOne({id_user : user._id});
             // return an error if the doctor it not exist
             if (!doctor) {
-                return res.status(404).json({ error: 'Professionnel non sélection.', status : 404 });
+                return res.status(404).json({ error: 'Professionnel non trouvé.', status : 404 });
             }
             // // Pass in function his doctor id, id to delete (user id) and res for return status
             const response = await deleteLinkFunction(doctor._id)(id_delete);
