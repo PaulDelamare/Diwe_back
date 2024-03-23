@@ -440,7 +440,7 @@ exports.requestDeletion = async (req, res) => {
 + *
 + * @param {Object} req - The request object
 + * @param {Object} res - The response object
-+ * @return {Promise} A Promise that resolves to the result of the deletion request
++ * @return {Promise} The result of the doctor information retrieval
 + */
 exports.findDoctor = async (req, res) => {
     //Find user last information with the id user in req (jwt)
@@ -488,7 +488,7 @@ exports.findDoctor = async (req, res) => {
 + *
 + * @param {Object} req - The request object
 + * @param {Object} res - The response object
-+ * @return {Promise} A Promise that resolves to the result of the deletion request
++ * @return {Promise} The result request link
 + */
 exports.requestLink = async (req, res) => {
     //Find user last information with the id user in req (jwt)
