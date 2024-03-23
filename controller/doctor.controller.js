@@ -96,7 +96,7 @@ exports.getRequestLink = async (req, res) => {
 exports.validateRequestLink = async (req, res) => {
 
     // Check if the id is valid
-    if(!isValidObjectId(req.params.id)){
+    if(!isValidObjectId(req.query.id)){
         return res.status(400).json({ error: 'Id invalide', status: 400 });
     }
 
@@ -133,7 +133,7 @@ exports.validateRequestLink = async (req, res) => {
     }
 
     //Find the request with id
-    const requestValidate = await RequestLink.findOne({_id : req.params.id, id_doctor : doctor._id} );
+    const requestValidate = await RequestLink.findOne({_id : req.query.id, id_doctor : doctor._id} );
     // If the user does not exist, return an error
     if (!requestValidate) {
         return res.status(404).json({ error: 'Cette requête n\'existe pas.', status : 404 });
@@ -161,7 +161,7 @@ exports.validateRequestLink = async (req, res) => {
     try {
 
         // update the request status
-        await RequestLink.updateOne({ _id: req.params.id }, { $set: { status: req.body.validate ? 'accepted' : 'refused', reponse_date : new Date() } });
+        await RequestLink.updateOne({ _id: req.query.id }, { $set: { status: req.body.validate ? 'accepted' : 'refused', reponse_date : new Date() } });
 
         // If the request are validated by the doctor
         if (req.body.validate) {

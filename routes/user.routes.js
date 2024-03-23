@@ -29,9 +29,11 @@ router.put('/user/update-password', checkConnection(), UserController.changePass
 router.put('/user/update-email', checkConnection(), UserController.changeEmail);
 //Request deletion
 router.put('/user/request-deletion', checkConnection(), UserController.requestDeletion);
+//Find doctor
+router.get('/user/find-doctor', checkConnection(['user']), UserController.findDoctor);
 //Request link
 router.post('/user/request-link', checkConnection(['user']), UserController.requestLink);
-//Request link
+//Get request link
 router.get('/user/request', checkConnection(['user']), UserController.findRequestLinkUser);
 //Get Doctor linked
 router.get('/user/doctor', checkConnection(['user']), UserController.getDoctorLink);
@@ -40,7 +42,7 @@ router.put('/user/prescription', checkConnection(['user']), uploadPrescription, 
 //Get prescription
 router.get('/user/prescription', checkConnection(['user']), UserController.getPrescription);
 //Delete link
-router.put('/user/delete-link/:id_delete', checkConnection(['user', 'health']), UserController.deleteLink);
+router.put('/user/delete-link', checkConnection(['user', 'health']), UserController.deleteLink);
 
 //////////
 //////////

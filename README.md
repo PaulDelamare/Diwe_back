@@ -289,7 +289,7 @@ Response :
 
 ### Validate account
 
-`GET validateAccount/:email/:token`
+`GET validateAccount?email={email}&token={token}`
 
 - This route is use only in email for validate account and don't require api-key
 
@@ -618,9 +618,9 @@ Response :
 
 > The message and the status error depends on the error
 
-### Request link to doctor
+### Find doctor
 
-`POST user/request-link`
+`GET user/find-doctor?email={email}`
 
 Authentication :
 
@@ -628,13 +628,55 @@ Authentication :
 
 Parameters :
 
-> No parameters
+> Pass as parameter the email
 
 Body :
 
-| Name      | Type   | Description        |
-| --------- | ------ | ------------------ |
-| link_code | string | The user firstname |
+> No body
+
+Response :
+
+- 200
+
+```json
+{
+    "doctor": {
+        "_id": string,
+        "firstname": string,
+        "lastname": string,
+        "email": string,
+        "phone": string
+    },
+    "status": number,
+}
+```
+
+- 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Request link to doctor
+
+`POST user/request-link?id={id}`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> Pass in parameters the id_doctor to link
+
+Body :
+
+> No body
 
 Response :
 
@@ -835,7 +877,7 @@ Response :
 
 ### Delete Link
 
-`PUT user/delete-link/:id_delete`
+`PUT user/delete-link?id_delete={id_delete}`
 
 Authentication :
 
@@ -923,7 +965,7 @@ Response :
 
 ### Validate Request
 
-`POST doctor/validate-request/:id`
+`POST doctor/validate-request?id={id}`
 
 Authentication :
 
@@ -962,7 +1004,6 @@ Response :
 ```
 
 > The message and the status error depends on the error
-
 
 ### Get users linked
 
@@ -1118,7 +1159,7 @@ Response :
 
 ### Delete meal 
 
-`DELETE meal/:id`
+`DELETE meal?id={id}`
 
 Authentication :
 
@@ -1126,7 +1167,7 @@ Authentication :
 
 Parameters :
 
-> Pass as parameter the id of the request to accept
+> Pass as parameter the id of the meal to delete
 
 Body :
 

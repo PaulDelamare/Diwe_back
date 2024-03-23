@@ -21,7 +21,7 @@ router.post('/meal', checkConnection(['user']), upload, MealController.create);
 //Route get last meal
 router.get('/meal', checkConnection(['user', 'health']), MealController.getLast);
 //Route delete one meal
-router.delete('/meal/:id', checkConnection(['user']), MealController.delete);
+router.delete('/meal', checkConnection(['user']), MealController.delete);
 
 //////////
 //////////

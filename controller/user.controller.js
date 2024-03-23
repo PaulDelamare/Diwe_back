@@ -22,7 +22,7 @@ const uploadImage = require('../utils/uploadImage');
 const { cryptDocument, decryptFile } = require('../utils/safeUpload');
 //Import dunction for send email
 const sendEmail = require('../utils/sendEmail');
-// Import function for valiodate id
+// Import function for validate id
 const { isValidObjectId } = require('mongoose');
 //Import function for delete link
 const deleteLinkFunction = require('../utils/deleteLink');
@@ -436,11 +436,59 @@ exports.requestDeletion = async (req, res) => {
 }
 
 /**
++ * Find doctor for request link next or create if he doesn't exist
++ *
++ * @param {Object} req - The request object
++ * @param {Object} res - The response object
++ * @return {Promise} The result of the doctor information retrieval
++ */
+exports.findDoctor = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    // Get email from query string
+    const email = req.query.email;
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Check if link code is correct
+    validateBody.emailValidator('email', true, false, true);
+
+    // Create fake body for validation
+    const tempBody = { body: { email : email } };
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(tempBody);
+
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    try{
+        // Find Doctor who have the same link_code
+        const doctor = await Doctor.findOne({ email: email }, 'email phone firstname lastname');
+
+        //If all is correct, return message
+        return res.status(201).json({ doctor: doctor, status: 201 });
+    }catch(e){
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de liaison de compte', status: 500 });
+    }  
+}
+
+/**
 + * Request link to doctor with the given link_code in the request (JWT). Stock in colletion the request
 + *
 + * @param {Object} req - The request object
 + * @param {Object} res - The response object
-+ * @return {Promise} A Promise that resolves to the result of the deletion request
++ * @return {Promise} The result request link
 + */
 exports.requestLink = async (req, res) => {
     //Find user last information with the id user in req (jwt)
@@ -451,35 +499,27 @@ exports.requestLink = async (req, res) => {
         return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
     }
 
-    //Validation
-    const validateBody = new ValidateBody();
+    const id_doctor = req.query.id;
 
-    //Check if link code is correct
-    validateBody.linkCodeValidator('link_code', true);
-
-    //Check the rules with data in body
-    let valideBody = await validateBody.validateRules(req);
-
-    if (!valideBody.isEmpty()) {
-        // Return a JSON response with the determined status code
-        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    if (!isValidObjectId(id_doctor)) {
+        return res.status(422).json({ error: 'L\'id n\'est pas valide', status : 422 });
     }
 
     // Find Doctor who have the same link_code
-    const doctor = await Doctor.findOne({ binding_code: req.body.link_code });
-
-    // If account is already linked
-    if (doctor.users_link.includes(user._id)) {
-        return res.status(409).json({ error: 'Vous avez déjà lié ce professionnel à votre compte.', status : 409 });
-    }
+    const doctor = await Doctor.findById(id_doctor);
 
     // If the dotcor does not exist, return an error
     if (!doctor) {
         return res.status(404).json({ error: 'Spécialiste de santé non trouvé.', status : 404 });
     }
 
+    // If account is already linked
+    if (doctor.users_link.includes(user._id)) {
+        return res.status(409).json({ error: 'Vous avez déjà lié ce professionnel à votre compte.', status : 409 });
+    }
+
     // Find if request already exist
-    const allReadyExist =  await RequestLink.findOne({ id_user: user._id, id_doctor: doctor._id, reponse_date:null });
+    const allReadyExist =  await RequestLink.findOne({ id_user: user._id, id_doctor: doctor._id, reponse_date: null });
 
     // If the request already exist, return an error
     if(allReadyExist){
@@ -718,7 +758,7 @@ exports.deleteLink = async (req, res) => {
     }
 
     // Get id to delete (can be an doctor id or user id)
-    const id_delete = req.params.id_delete;
+    const id_delete = req.query.id_delete;
 
     // Check if the id is valid
     if (!isValidObjectId(id_delete)) {
