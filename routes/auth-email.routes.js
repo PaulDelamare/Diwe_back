@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 const AuthController = require('../controller/auth.controller');
+const UserController = require('../controller/user.controller');
 
 //////////
 //////////
@@ -13,6 +14,8 @@ const AuthController = require('../controller/auth.controller');
 
 //Route validate Account
 router.get('/validateAccount/:email/:token', AuthController.validateAccount);
+//Route validate new email
+router.get('/verify-email-change', UserController.verifyEmailRequest);
 
 //////////
 //////////
