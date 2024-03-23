@@ -19,7 +19,9 @@ const { validate: isUuid, v4: uuidv4 } = require('uuid');
 const speakeasy = require('speakeasy');
 // Require verification code model
 const VerificationCode = require('../models/VerificationCode');
+//Import Meal model
 const Meal = require('../models/Meal');
+// Import function for generate login code
 const generateCode = require('../utils/loginCode');
 //////////
 //////////
@@ -59,6 +61,13 @@ exports.register = async (req, res) => {
         return res.status(422).json({ errors: valideBody.array(), status: 422 });
     }
 
+    if (req.body.role !== "health") {
+        const doctorAccount = await Doctor.findOne({ email: req.body.email });
+        if (doctorAccount) {
+            return res.status(409).json({ error: 'L\'adresse e-mail est déjà utilisée pour un professionel.', status: 409 });
+        }
+    }
+
     try {
         //Hash password
         req.body.password = await bcrypt.hash(req.body.password, 10);
@@ -88,7 +97,7 @@ exports.register = async (req, res) => {
                     //Update message for response
                     message = "Un utilisateur à crée un professionel de la santé avec cette email. Un email de confirmation vous a été envoyé pour confirmer votre identité et lié votre compte."
                 }   
-            }else{
+            } else {
 
                 //Add id user for linked to doctor
                 req.body.id_user = user._id;
@@ -114,7 +123,7 @@ exports.register = async (req, res) => {
             email: req.body.email,
             token : user.token
         }
-        await (req.body.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
+        await sendEmail(req.body.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
 
         //If user (and doctor) is create return success
         res.status(201).json({ 
@@ -388,6 +397,12 @@ exports.validateAccount = async (req, res) => {
     try {
         //Update user
         await User.findOneAndUpdate( { email, token }, { active: true, token: uuidv4() }, { new: true } );
+        if (user.role === "health") {
+            const doctor = await Doctor.findOne({ email: email, id_user: null });
+            if (doctor) {
+                await Doctor.updateOne({ _id: doctor._id }, { id_user: user._id });
+            }
+        }
 
         // If the account is active, return email for validate to user
         await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Compte validé', 'validateEmail/validate-success', emailData);
