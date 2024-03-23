@@ -97,6 +97,13 @@ exports.sendEmail = async (req, res) => {
     }
 }
 
+/**
++ * Find user last information with the id user in req (jwt)
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Promise} Promise that resolves with the result of the function
++ */
 exports.getEmail = async (req, res) => {
     // Find user last information with the id user in req (jwt)
     const user = await User.findById(req.user._id);
