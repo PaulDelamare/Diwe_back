@@ -28,7 +28,7 @@ function cleanupTask() {
                     const doctor = await Doctor.findOne({ id_user: user._id });
     
                     // Check if doctor really exist
-                    if (doctor && doctor.users_link.length === 0 ) {
+                    if (doctor) {
                         // If a doctor is found, delete it
                         await Doctor.deleteOne({ _id: doctor._id });
                     }
