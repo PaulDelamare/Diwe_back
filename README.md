@@ -334,8 +334,6 @@ Parameters :
 
 Body :
 
-- Data must be sent as FormData.
-
 | Name        | Type   | Description           |
 | ----------- | ------ | --------------------- |
 | password    | string | The user password     |
@@ -379,14 +377,15 @@ Parameters :
 
 Body :
 
-- Data must be sent as FormData.
-
-| Name        | Type   | Description           |
-| ----------- | ------ | --------------------- |
-| password    | string | The user password     |
-| email       | string | The new user email    |
+| Name     | Type   | Description           |
+| -------- | ------ | --------------------- |
+| password | string | The user password     |
+| newEmail | string | The new user email    |
+| oldEmail | string | The old user email    |
 
 Response :
+
+> An email is send to the new email for validate change
 
 - 200 
 
@@ -394,11 +393,8 @@ Response :
 {
     "message": string,
     "status": number,
-    "reconnect_required": boolean
 }
 ```
-
-> The succes of this operation **need the reconnection og the user**
 
 - 401/404/422/500
 
@@ -410,6 +406,30 @@ Response :
 ```
 
 > The message and the status error depends on the error
+
+### Update user email
+
+`GET verify-email-change`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> The token pass in link with ?token=
+
+Body :
+
+> No body
+
+Response :
+
+- Success - Redirection
+
+> The succes of this operation **need the reconnection og the user**
+
+- Error - Redirection
 
 ### Check last user connection
 
