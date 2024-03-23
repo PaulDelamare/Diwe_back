@@ -369,10 +369,10 @@ exports.resendCode = async (req, res) => {
 + */
 exports.validateAccount = async (req, res) => {
     
-    //Get email and token from params
-    const email = req.params.email;
-    const token = req.params.token;
-
+    //Get email and token from query
+    const token = req.query.token;
+    const email = req.query.email;
+    
     //Validate email and token
     validateEmailAndToken(email, token);
 
