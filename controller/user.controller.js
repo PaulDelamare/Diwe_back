@@ -24,7 +24,12 @@ const { cryptDocument, decryptFile } = require('../utils/safeUpload');
 const sendEmail = require('../utils/sendEmail');
 // Import function for valiodate id
 const { isValidObjectId } = require('mongoose');
+//Import function for delete link
 const deleteLinkFunction = require('../utils/deleteLink');
+//Import EmailChange model
+const EmailChange = require('../models/EmailChangeRequest ');
+//Uuid for check the token in email
+const { validate: isUuid } = require('uuid');
 //////////
 //////////
 
@@ -289,7 +294,8 @@ exports.changeEmail = async (req, res) => {
 
     //Create rules
     validateBody.passwordValidator('password');
-    validateBody.emailValidator('email', true, true, false);
+    validateBody.emailValidator('newEmail', true, true, false);
+    validateBody.emailValidator('oldEmail', true, false, false);
 
     //Check the rules with data in body
     let valideBody = await validateBody.validateRules(req);
@@ -298,6 +304,12 @@ exports.changeEmail = async (req, res) => {
     if (!valideBody.isEmpty()) {
         // Return a JSON response with the determined status code
         return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    // Check if the old email is correct
+    if(req.body.oldEmail !== user.email){
+        // Return a JSON response with the determined status code
+        return res.status(401).json({ error: 'Adresse e-mail incorrecte.', status: 401 }); 
     }
 
     //Check if password is correct
@@ -311,15 +323,79 @@ exports.changeEmail = async (req, res) => {
         return res.status(401).json({ errors: valideBody.array(), status: 401 });
     }
     try{
-        //If all is correct, update email
-        await User.findByIdAndUpdate(req.user._id, { email: req.body.email, updated_at: Date.now() });
+
+        // Create email change request in database
+        const emailChangeRequest = await EmailChange.create({
+            id_user: req.user._id,
+            newEmail: req.body.newEmail,
+            expiresAt: Date.now() + 3600000,
+        });
+
+        // Pass custom data to email template
+        const emailData = {
+            firstname : user.firstname,
+            emailService : process.env.EMAIL_SERVICE,
+            token : emailChangeRequest.token
+        }
+
+        // Send email with the link for validate email
+        await sendEmail(req.body.newEmail, process.env.EMAIL_SENDER, 'Demande de changement d\'adresse e-mail', 'global/change-email-request', emailData);
 
         //Return message if success
-        return res.status(200).json({ message: 'Adresse e-mail mise à jour avec succès.', status: 200, "reconnect_required": true });
+        return res.status(200).json({ message: 'Un email a été envoyé pour valider votre changement.', status: 200 });
     }catch(e){
-        //If an error occurs, send an error message
+        //If an error occurs, send an error messageS
         return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de l\'adresse e-mail.', status: 500 });
     }
+}
+
+/**
++ * Verify the email change request and update the user email if the request is valid.
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Promise} a promise that resolves when the email change request is verified and processed
++ */
+exports.verifyEmailRequest = async (req, res) => {
+
+    // Get the token from url
+    const token = req.query.token;
+
+    // Check if is valid token
+    if (!isUuid(token)) {
+        return res.status(400).json({ error: 'Jeton invalide', status : 400 });
+    }
+
+    try {
+        // Find in Database the email change request
+        const emailChangeRequest = await EmailChange.findOne({ token });
+    
+        // If the token is not found
+        if (!emailChangeRequest) {
+          // Return an error message
+          return res.status(404).json({ error: 'Jeton invalide ou expiré.', status : 404 });
+        }
+    
+        // If the token has expired
+        if (emailChangeRequest.expiresAt < Date.now()) {
+          // Return an error message
+          return res.status(400).json({ error: 'Jeton expiré. Veuillez demander un nouveau changement d\'e-mail.', status : 400 });
+        }
+    
+        // If all is correct, update the user email
+        await User.updateOne({ _id: emailChangeRequest.id_user }, { email: emailChangeRequest.newEmail });
+    
+        // Delete form data base the email change request
+        await EmailChange.findByIdAndDelete(emailChangeRequest._id);
+    
+        // Redirect if success
+        res.redirect('https://www.needfor-school.com/');
+
+      } catch (error) {
+        // If an error occurs, send an error message
+        console.error(error);
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de l\'adresse e-mail.' });
+      }
 }
 
 /**

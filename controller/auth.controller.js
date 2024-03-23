@@ -114,7 +114,7 @@ exports.register = async (req, res) => {
             email: req.body.email,
             token : user.token
         }
-        sendEmail(req.body.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
+        await (req.body.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
 
         //If user (and doctor) is create return success
         res.status(201).json({ 
@@ -390,12 +390,12 @@ exports.validateAccount = async (req, res) => {
         await User.findOneAndUpdate( { email, token }, { active: true, token: uuidv4() }, { new: true } );
 
         // If the account is active, return email for validate to user
-        sendEmail(user.email,  process.env.EMAIL_SENDER, 'Compte validé', 'validateEmail/validate-success', emailData);
+        await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Compte validé', 'validateEmail/validate-success', emailData);
         res.redirect('https://www.needfor-school.com/');
     } catch (error) {
         //If an error occurs, send an error message
         console.log(error);
-        sendEmail(email,  process.env.EMAIL_SENDER, 'Une erreur s\'est produite', 'validateEmail/validate-fail', );
+        await sendEmail(email,  process.env.EMAIL_SENDER, 'Une erreur s\'est produite', 'validateEmail/validate-fail', );
         res.redirect('https://www.needfor-school.com/');
     }
 }
@@ -446,12 +446,12 @@ exports.resendEmail = async (req, res) => {
     }
     try {
         //Send email for validate to user
-        sendEmail(user.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
+        await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Validation de votre compte', 'validateEmail/validate-account', emailData );
         //Return succes message
         res.status(200).json({ message: 'Email envoyé', status: 200 });
     } catch (error) {
         //If an error occurs, send an error message
-        sendEmail(user.email,  process.env.EMAIL_SENDER, 'Une erreur s\'est produite', 'validateEmail/validate-fail', emailData);
+        await sendEmail(user.email,  process.env.EMAIL_SENDER, 'Une erreur s\'est produite', 'validateEmail/validate-fail', emailData);
         res.status(500).json({ message: error.message, status: 500 });
     }
 }
@@ -489,7 +489,7 @@ function validateEmailAndToken(email, token) {
     if (!isUuid(token)) {
         throw new Error('Invalid token');
     }
-  }
+}
   
 
 //////////
