@@ -13,7 +13,7 @@ const UserController = require('../controller/user.controller');
 //API ROUTES
 
 //Route validate Account
-router.get('/validateAccount/:email/:token', AuthController.validateAccount);
+router.get('/validateAccount', AuthController.validateAccount);
 //Route validate new email
 router.get('/verify-email-change', UserController.verifyEmailRequest);
 

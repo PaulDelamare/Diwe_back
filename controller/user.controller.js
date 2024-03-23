@@ -758,7 +758,7 @@ exports.deleteLink = async (req, res) => {
     }
 
     // Get id to delete (can be an doctor id or user id)
-    const id_delete = req.params.id_delete;
+    const id_delete = req.query.id_delete;
 
     // Check if the id is valid
     if (!isValidObjectId(id_delete)) {

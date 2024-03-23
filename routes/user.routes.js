@@ -42,7 +42,7 @@ router.put('/user/prescription', checkConnection(['user']), uploadPrescription, 
 //Get prescription
 router.get('/user/prescription', checkConnection(['user']), UserController.getPrescription);
 //Delete link
-router.put('/user/delete-link/:id_delete', checkConnection(['user', 'health']), UserController.deleteLink);
+router.put('/user/delete-link', checkConnection(['user', 'health']), UserController.deleteLink);
 
 //////////
 //////////
