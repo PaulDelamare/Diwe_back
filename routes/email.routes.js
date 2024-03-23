@@ -16,8 +16,10 @@ const checkConnection = require ('../utils/validateRole');
 //////////
 //API ROUTES
 
-//Route register
+//Route send email
 router.post('/sendEmail', checkConnection(),  upload.array('files'), EmailController.sendEmail);
+//Route get email
+router.get('/email', checkConnection(), EmailController.getEmail);
 
 //////////
 //////////

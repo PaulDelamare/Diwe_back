@@ -1136,7 +1136,7 @@ Response :
 
 ## Email
 
-### Send email
+### Send Email
 
 `POST sendEmail`
 
@@ -1174,6 +1174,59 @@ Response :
 ```
 
 - 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Get Email
+
+`GET email`
+
+Authentication :
+
+> Jwt token require and only blog role can use it
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response : 
+
+- 200
+
+```json
+{
+    "emails": [
+        {
+            "_id": string,
+            "sender": string,
+            "recipient": string,
+            "subject": string,
+            "body": string,
+            "attachment": [
+                string
+            ],
+            "read": boolean,
+            "created_at": Date,
+            "__v": number
+        },
+        ...
+    ],
+    "status": number
+}
+```
+
+- 404/500
 
 ```json
 {

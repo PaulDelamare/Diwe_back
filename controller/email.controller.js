@@ -1,5 +1,6 @@
 //////////
 //REQUIRE
+const Email = require('../models/Email');
 const User = require('../models/User');
 const { decryptFile, cryptDocument } = require('../utils/safeUpload');
 const sendEmail = require('../utils/sendEmail');
@@ -93,6 +94,33 @@ exports.sendEmail = async (req, res) => {
     } catch (error) {
         // If an error occurs, send an error message
         res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail' });
+    }
+}
+
+/**
++ * Find user last information with the id user in req (jwt)
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Promise} Promise that resolves with the result of the function
++ */
+exports.getEmail = async (req, res) => {
+    // Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        // If the user does not exist, return an error
+        return res.status(404).json({ error: 'utilisateur non trouvé', status : 404 });
+    }
+
+    try {
+        // Find email
+        const emails = await Email.find({ sender: user.email });
+       
+        // If succes, return emails
+        res.status(200).json({ emails: emails, status : 200 });
+    } catch (error) {
+        // If an error occurs, send an error message
+        res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail', status : 500 });
     }
 }
 
