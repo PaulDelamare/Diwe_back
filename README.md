@@ -289,7 +289,7 @@ Response :
 
 ### Validate account
 
-`GET validateAccount/:email/:token`
+`GET validateAccount?email={email}&token={token}`
 
 - This route is use only in email for validate account and don't require api-key
 
@@ -877,7 +877,7 @@ Response :
 
 ### Delete Link
 
-`PUT user/delete-link/:id_delete`
+`PUT user/delete-link?id_delete={id_delete}`
 
 Authentication :
 
@@ -1159,7 +1159,7 @@ Response :
 
 ### Delete meal 
 
-`DELETE meal/:id`
+`DELETE meal?id={id}`
 
 Authentication :
 
@@ -1167,7 +1167,7 @@ Authentication :
 
 Parameters :
 
-> Pass as parameter the id of the request to accept
+> Pass as parameter the id of the meal to delete
 
 Body :
 
