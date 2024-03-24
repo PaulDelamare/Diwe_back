@@ -37,6 +37,8 @@ router.post('/user/request-link', checkConnection(['user']), UserController.requ
 router.get('/user/request', checkConnection(['user']), UserController.findRequestLinkUser);
 //Get Doctor linked
 router.get('/user/doctor', checkConnection(['user']), UserController.getDoctorLink);
+//Create Fictive Doctor
+router.post('/user/doctor', checkConnection(['user']), UserController.createFictiveDoctor);
 //Add prescription 
 router.put('/user/prescription', checkConnection(['user']), uploadPrescription, UserController.updatePrescription);
 //Get prescription
