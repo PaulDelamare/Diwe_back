@@ -41,11 +41,11 @@ class ValidateBody{
         }
 
         //Add basic rules for text (Must be a regulated size string with only letters)
-        validationRule.isString().withMessage(`${traduction} doit être une chaîne de caractères`).isLength({ min: min, max: max }).withMessage(`${traduction} doit avoir entre ${min} et ${max} caractères`).matches(regex).withMessage(`${traduction} ne doit contenir que des lettres, des espaces et de la ponctuation`);
+        validationRule.isString().withMessage(`${traduction} doit être une chaîne de caractères`).isLength({ min: min, max: max }).withMessage(`${traduction} doit avoir entre ${min} et ${max} caractères`);
 
         //Add conditionnal rules (require or not)
-        if (require) {
-            validationRule.notEmpty().withMessage(`Le ${traduction} est obligatoire`);
+        if (require || punctuation) {
+            validationRule.notEmpty().withMessage(`Le ${traduction} est obligatoire`).matches(regex).withMessage(`${traduction} ne doit contenir que des lettres, des espaces et de la ponctuation`);
         }else{
             validationRule.optional();
         }

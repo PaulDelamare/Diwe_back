@@ -524,7 +524,7 @@ exports.requestLink = async (req, res) => {
             // Link the two account
             await Doctor.updateOne({ _id: doctor._id }, { $push: { users_link: user._id } });
             await User.updateOne({ _id: user._id }, { $push: { doctors_link: doctor._id } });
-            return res.status(200).json({ message: "Vous êtes désormais lié à ce professionel", status: 200 });
+            return res.status(200).json({ message: "Vous êtes désormais lié à ce professionnel", status: 200 });
         } catch (error) {
             console.log(error)
             // If an error occur, return this error
@@ -656,6 +656,78 @@ exports.getDoctorLink = async (req, res) => {
     } catch (error) {
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des professionnels.', status: 500 });
+    }
+}
+
+/**
++ * Create a fictive doctor by processing the request body. 
++ *
++ * @param {Object} req - The request object containing user information
++ * @param {Object} res - The response object to send back
++ * @return {Object} JSON response with status and message
++ */
+exports.createFictiveDoctor = async (req, res) => {
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+     //Check if link code is correct
+    validateBody.emailValidator('email', true, true, false);
+    validateBody.textValidator('firstname', true, 2, 30, 'Le prénom');
+    validateBody.textValidator('lastname', false, 0, 30, 'Le nom');
+    validateBody.phoneValidator('phone', false);
+ 
+     //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+ 
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    // Check if doctor email address doesn't exist
+    const existeDoctor = await Doctor.findOne({ email: req.body.email });
+
+    // Stock in variable body data
+    if (existeDoctor) {
+        return res.status(409).json({ error: 'Ce professionnel existe déjà', status : 409 });
+    }
+
+    // if all is valid
+    try {
+
+        // Create Doctor
+        const doctor =  await Doctor.create(req.body);
+
+        // Link to the user who create the doctor
+        await Doctor.updateOne({ _id: doctor._id }, { $push: { users_link: user._id } });
+        await User.updateOne({ _id: user._id }, { $push: { doctors_link: doctor._id } });
+
+        // Pass the custom data to the email template
+        const emailData= {
+            firstname: doctor.firstname,
+            lastname: doctor.lastname,
+            email: doctor.email,
+            phone: doctor.phone,
+            email_create: user.email
+        }
+
+        // Send the email
+        await sendEmail(doctor.email, process.env.EMAIL_SENDER, 'Création de compte Professionnel de santé', 'doctor/new-account', emailData);
+
+        // Return success
+        res.status(201).json({ message: "Le professionnel a bien été crée.", status: 201 });        
+    } catch (error) {
+        console.log(error)
+        //If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la création du professionnel.', status: 500 });
     }
 }
 

@@ -29,10 +29,6 @@ const DoctoSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    binding_code:{
-        type: Number,
-        required: true
-    },
     created_at:{
         type: Date,
         required: true,
