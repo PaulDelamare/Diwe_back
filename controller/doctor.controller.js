@@ -37,7 +37,7 @@ exports.getRequestLink = async (req, res) => {
 
     // If the user does not exist, return an error
     if (!doctor) {
-        return res.status(404).json({ error: 'Professionel non trouvé.', status : 404 });
+        return res.status(404).json({ error: 'Professionnel non trouvé.', status : 404 });
     }
     try {
         const requestsWithUsers = await RequestLink.aggregate([
@@ -129,7 +129,7 @@ exports.validateRequestLink = async (req, res) => {
 
     // If the user does not exist, return an error
     if (!doctor) {
-        return res.status(404).json({ error: 'Professionel non trouvé.', status : 404 });
+        return res.status(404).json({ error: 'Professionnel non trouvé.', status : 404 });
     }
 
     //Find the request with id
@@ -210,7 +210,7 @@ exports.getUsersLink = async (req, res) => {
 
     // If the doctor does not exist, return an error
     if (!doctor) {
-        return res.status(404).json({ error: 'Professionel non trouvé.', status : 404 });
+        return res.status(404).json({ error: 'Professionnel non trouvé.', status : 404 });
     }
 
     try {
