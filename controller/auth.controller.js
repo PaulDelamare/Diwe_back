@@ -64,7 +64,7 @@ exports.register = async (req, res) => {
     if (req.body.role !== "health") {
         const doctorAccount = await Doctor.findOne({ email: req.body.email });
         if (doctorAccount) {
-            return res.status(409).json({ error: 'L\'adresse e-mail est déjà utilisée pour un professionel.', status: 409 });
+            return res.status(409).json({ error: 'L\'adresse e-mail est déjà utilisée pour un professionnel.', status: 409 });
         }
     }
 
@@ -95,24 +95,12 @@ exports.register = async (req, res) => {
                     //Send email to verify doctor
 
                     //Update message for response
-                    message = "Un utilisateur à crée un professionel de la santé avec cette email. Un email de confirmation vous a été envoyé pour confirmer votre identité et lié votre compte."
+                    message = "Un utilisateur à crée un professionnel de la santé avec cette email. Un email de confirmation vous a été envoyé pour confirmer votre identité et lié votre compte."
                 }   
             } else {
 
                 //Add id user for linked to doctor
                 req.body.id_user = user._id;
-
-                //Create random binding code
-                let bindingCode;
-                do {
-                    //Generate random code
-                    bindingCode = generateRandomCode();
-
-                    //Check if code already exists
-                } while (await Doctor.exists({ binding_code: bindingCode }));
-
-                //Add binding code in body
-                req.body.binding_code = bindingCode;
 
                 //Create doctor
                 await Doctor.create(req.body);
@@ -476,16 +464,6 @@ exports.resendEmail = async (req, res) => {
 
 //////////
 //OTHER FUNCTIONS
-
-/**
- * Generates a random code.
- *
- * @return {number} the randomly generated code
- */
-function generateRandomCode() {
-    return Math.floor(1000000000 + Math.random() * 9000000000);
-}
-
 
 /**
 + * Validate email and token from email
