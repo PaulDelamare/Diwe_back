@@ -10,6 +10,7 @@ const ValidateBody = require('../utils/validateBody');
 const RequestLink = require('../models/RequestLink');
 const { isValidObjectId } = require('mongoose');
 const sendEmail = require('../utils/sendEmail');
+const Meal = require('../models/Meal');
 //////////
 //////////
 
@@ -223,6 +224,61 @@ exports.getUsersLink = async (req, res) => {
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des professionnels.', status: 500 });
     }
+}
+
+/**
++ * Get single user information based on the request user ID and return the user's information, last meal, and health signals if successful, otherwise return an error message.
++ *
++ * @param {Object} req - The request object
++ * @param {Object} res - The response object
++ * @return {Object} JSON object containing user information, last meal, and status code
++ */
+exports.getSingleUser = async (req, res) => {
+
+    //Find user last information with the id user in req (jwt)
+    const user = await User.findById(req.user._id);
+
+    // If the user does not exist, return an error
+    if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
+    }
+
+    // get the id in url
+    const id_user = req.query.id;
+    if (!isValidObjectId(id_user)) {
+        // if id isn't valid, return error
+        return res.status(400).json({ error: 'Utilisateur non trouvé.', status : 400 });
+    }
+
+    // Get doctor information
+    const doctor = await Doctor.findOne({ id_user: user._id });
+
+    // If the doctor does not exist, return an error
+    if (!doctor) {
+        return res.status(404).json({ error: 'Professionnel non trouvé.', status : 404 });
+    }
+
+    if (!doctor.users_link.includes(id_user)) {
+        return res.status(403).json({ error: 'Vous n\'avez pas la permission de consulter cet utilisateur.', status : 403 });
+    }
+
+    try {
+        // Find user
+        const user = await User.findOne({ _id: id_user }, { _id: 1, firstname: 1, lastname: 1, email: 1, phone: 1, birthday: 1 });
+        // Get the last user meal
+        const lastMeal = await Meal.findOne({ id_user: id_user }).sort({ created_at: -1 });
+        //TODO 
+        // Get the user health signal
+        // const signals = await Signal.find({ id_user: id_user }).sort({ created_at: -1 }).limit(20);
+
+        //If succes, return users
+        return res.status(200).json({ user: user, lastMeal: lastMeal, status:200 });
+
+    } catch (error) {
+        // If an error occurs, send an error message
+        return res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des informations utilisateurs', status: 500 });
+    }
+        
 }
 
 //////////
