@@ -20,6 +20,8 @@ router.get('/doctor/request', checkConnection(['health']), DocotorController.get
 router.post('/doctor/validate-request', checkConnection(['health']), DocotorController.validateRequestLink);
 //Get all users linked to doctor
 router.get('/doctor/users', checkConnection(['health']), DocotorController.getUsersLink);
+//Get user information
+router.get('/doctor/user-detail', checkConnection(['health']), DocotorController.getSingleUser);
 
 //////////
 //////////
