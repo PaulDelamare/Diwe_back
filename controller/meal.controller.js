@@ -97,6 +97,11 @@ exports.getLast = async (req, res) => {
         return res.status(404).json({ error: 'Utilisateur non trouvé.', status : 404 });
     }
 
+    // Get the limit
+    const limit = req.query.limit;
+    // Stock the id_user in a variable
+    let id_user = user._id;
+
     //Validation
     const validateBody = new ValidateBody();
 
@@ -104,11 +109,22 @@ exports.getLast = async (req, res) => {
     validateBody.numberValidator('limit', true, 0);
 
     if (user.role === "health") {
+        // get the id of the user
+        id_user = req.query.id;
+        // Check if it valdie
         validateBody.validateObjectId('id_user',true);
     }
 
+    // Create fake body for check validation
+    const reqBody = { 
+        body:{
+            limit : limit,
+            id_user : id_user
+        }
+    }
+
     //Check the rules with data in body
-    let valideBody = await validateBody.validateRules(req);
+    let valideBody = await validateBody.validateRules(reqBody);
 
     // Check for validation errors
     if (!valideBody.isEmpty()) {
@@ -122,19 +138,16 @@ exports.getLast = async (req, res) => {
         if (user.role === "health") {
             // Check if he has authorized 
             const doctor = await Doctor.findOne({ id_user: user._id });
-            if (!doctor.users_link.includes(req.body.id_user)) {
+            if (!doctor.users_link.includes(id_user)) {
                 // If not, return an error
                 return res.status(403).json({ error: 'Vous n\'avez pas accès aux informations de cet utilisateur.', status : 403 });
             }
-        }else{
-            //Pass id_user in body
-            req.body.id_user = user._id;
-        } 
-        
+        }
+    
         // Execute query
-        const recentMeals = await Meal.find({ id_user: req.body.id_user })
+        const recentMeals = await Meal.find({ id_user: id_user })
         .sort({ created_at: -1 }).select('image_path name calories proteins lipids glucids fibers calcium created_at')
-        .limit(req.body.limit);
+        .limit(limit);
 
         //If meal are correctly find return success
         res.status(200).json({ meals: recentMeals, status: 200 });

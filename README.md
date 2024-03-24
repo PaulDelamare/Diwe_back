@@ -1104,7 +1104,7 @@ Response :
 
 ### Get meal 
 
-`GET meal`
+`GET meal?limit={limit}&id={id}`
 
 Authentication :
 
@@ -1112,14 +1112,12 @@ Authentication :
 
 Parameters :
 
-> No parameters
+> Limit is the number of meal to get (0 = all)
+> Id is the user_id (only for doctor)
 
 Body :
 
-| Name    | Type   | Description                               |
-| ------- | ------ | ----------------------------------------- |
-| limit   | number | number of meals to collect (0 for all)    |
-| id_user | string | User id to consult (Only for health role) |
+> No body
 
 Response : 
 
