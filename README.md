@@ -800,6 +800,51 @@ Response :
 
 > The message and the status error depends on the error
 
+### Create fictive doctor
+
+`POST user/doctor`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> No parameters
+
+Body :
+
+| Name      | Type   | Description                     |
+| --------- | ------ | ------------------------------- |
+| email     | string | The doctor email                |
+| firstname | string | The doctor firstname            |
+| lastname  | string | The doctor lastname (optionnal) |
+| phone     | string | The doctor lastname (optionnal) |
+
+Response :
+
+> Send email to the doctor email
+
+- 201
+
+```json
+{
+    "message": string,
+    "status": number,
+}
+```
+
+- 404/409/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ### Update the Prescription
 
 `PUT user/prescription`
@@ -814,9 +859,9 @@ Parameters :
 
 Body :
 
-| Name         | Type       | Description                     |
-| ------------ | ---------- | ------------------------------- |
-| prescription | file (pdf) | The prescription in pdf formaty |
+| Name         | Type       | Description                    |
+| ------------ | ---------- | ------------------------------ |
+| prescription | file (pdf) | The prescription in pdf format |
 
 Response :
 
