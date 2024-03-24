@@ -680,9 +680,9 @@ Body :
 
 Response :
 
-> An email is send to the doctor
+> An email is send to the doctor or if it's a fictive doctor automatically bind
 
-- 201
+- 200/201
 
 ```json
 {

@@ -518,15 +518,30 @@ exports.requestLink = async (req, res) => {
         return res.status(409).json({ error: 'Vous avez déjà lié ce professionnel à votre compte.', status : 409 });
     }
 
-    // Find if request already exist
-    const allReadyExist =  await RequestLink.findOne({ id_user: user._id, id_doctor: doctor._id, reponse_date: null });
-
-    // If the request already exist, return an error
-    if(allReadyExist){
-        return res.status(409).json({ error: 'Vous avez déjà envoyé une demande de liaison de compte.', status : 409 });
+    // If it's a fictive doctor 
+    if (!doctor.id_user) {
+        try {
+            // Link the two account
+            await Doctor.updateOne({ _id: doctor._id }, { $push: { users_link: user._id } });
+            await User.updateOne({ _id: user._id }, { $push: { doctors_link: doctor._id } });
+            return res.status(200).json({ message: "Vous êtes désormais lié à ce professionel", status: 200 });
+        } catch (error) {
+            console.log(error)
+            // If an error occur, return this error
+            return res.status(500).json({ error: error, status : 500 });
+        }
     }
 
     try{
+        // Find if request already exist
+        const allReadyExist =  await RequestLink.findOne({ id_user: user._id, id_doctor: doctor._id, reponse_date: null });
+
+        // If the request already exist, return an error
+        if(allReadyExist){
+            return res.status(409).json({ error: 'Vous avez déjà envoyé une demande de liaison de compte.', status : 409 });
+        }
+
+
         //If all is correct create request
         await RequestLink.create({ id_user: user._id, id_doctor: doctor._id });
 
