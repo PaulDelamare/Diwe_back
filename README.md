@@ -1096,6 +1096,67 @@ Response :
 
 > The message and the status error depends on the error
 
+### Get One User Information
+
+`GET doctor/user-detail?if={id_user}`
+
+Authentication :
+
+> Jwt token require
+
+Parameters :
+
+> Pass in the url the id_user to consult
+
+Body :
+
+> No body
+
+Response :
+
+- 200
+
+```json
+{
+    "user": [
+        {
+            "_id": string,
+            "firstname": string,
+            "lastname": string,
+            "email": string,
+            "phone": string,
+            "birthday": Date
+        }
+    ],
+    "lastMeal":{
+        "_id": string,
+        "id_user": string,
+        "image_path": string,
+        "name": string,
+        "calories": number,
+        "proteins": number,
+        "lipids": number,
+        "glucids": number,
+        "fibers": number,
+        "calcium": number,
+        "created_at": Date,
+        "__v": number
+    },
+    "status": number,
+}
+```
+
+- 400/403/404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Meal
 
 ### Add meal 
