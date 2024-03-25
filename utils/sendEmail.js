@@ -47,6 +47,12 @@ async function sendEmail(to, sender, subject, templateName, data, attachments = 
     // Stock attchments path in variable 
     const attachmentsPath = attachments.map(attachment => attachment.encryptedPath);
 
+    // Get the api url
+    const url = process.env.API_URL;
+
+    //Pass the url in data
+    data.url = url;
+
     // For each recipient send an email
     for (const recipient of recipients) {
 
@@ -59,7 +65,7 @@ async function sendEmail(to, sender, subject, templateName, data, attachments = 
         }
 
         // Receive id email for tracking pixel 
-        data.trackingPixel  = `http://localhost:3000/api/read.gif${email._id}`;
+        data.trackingPixel  = `${url}read.gif${email._id}`;
 
         // Parameters to pass to the template
         // Header and footer are necessary for the style 
