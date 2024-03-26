@@ -59,11 +59,12 @@ exports.create = async (req, res) => {
         return res.status(404).json({ error: 'Le medecin sélectionné n\'est pas valide', status : 404 });
     }
 
-    if (user.doctors_link.includes(doctor._id)) {
+    if (!user.doctors_link.includes(doctor._id)) {
         return res.status(409).json({ error: 'Vous n\'êtes pas lié à ce médecin', status : 409 });
     }
 
     try {
+        // Add order in data base
         const order = await Order.create({
             id_product,
             email_doctor: req.body.email_doctor,
