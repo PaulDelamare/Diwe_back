@@ -2,6 +2,7 @@
 //REQUIRE
 //Import popup model
 const Product = require('../models/Product');
+const User = require('../models/User');
 const uploadImage = require('../utils/uploadImage');
 //Import validateBody class for have an acces to validate rules
 const ValidateBody = require('../utils/validateBody');
@@ -20,6 +21,14 @@ const ValidateBody = require('../utils/validateBody');
 + * @return {Object} JSON response with success or error message
 + */
 exports.create = async (req, res) => {
+
+    // get user last information
+    const user = await User.findById(req.user._id);
+    // If user isn't find
+    if(!user) {
+        // return an error
+        return res.status(404).json({ error: 'utilisateur non trouvé', status : 404 });
+    }
 
     //Validation
     //Instance validateBody
@@ -70,10 +79,20 @@ exports.create = async (req, res) => {
 + * @return {Promise} - a promise that resolves with the products or rejects with an error
 + */
 exports.getAllProducts = async (req, res) => {
+    // get user last information
+    const user = await User.findById(req.user._id);
+    // If user isn't find
+    if(!user) {
+        // return an error
+        return res.status(404).json({ error: 'utilisateur non trouvé', status : 404 });
+    }
     try {
+        // Find all products
         const products = await Product.find();
+        // return this
         res.status(200).json({products: products, status: 200});
     } catch (error) {
+        // If an error occurs, send an error message
         res.status(500).json({ error: error.message || "Une erreur s'est produite lors de la création du produit.", status : 500 });
     }
 }
