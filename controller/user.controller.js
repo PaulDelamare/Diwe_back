@@ -135,7 +135,7 @@ exports.updateProfilePicture = async (req, res) => {
         await User.findByIdAndUpdate(user._id, { profile_picture: imageFilePath, updated_at: Date.now() }, { new: true });
         
         //Return message if success
-        return res.status(200).json({ message: 'La photo de profil a correctement été enregistré', status: 200 });
+        return res.status(200).json({ message: 'La photo de profil a correctement été enregistré', profile_picture: imageFilePath, status: 200 });
 
     }catch(e){
         console.error('Error in updateProfilePicture:', e);
