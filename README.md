@@ -1165,7 +1165,7 @@ Response :
 
 Authentication :
 
-> Jwt token require and only blog role can use it
+> Jwt token require and only user role can use it
 
 Parameters :
 
@@ -1214,7 +1214,7 @@ Response :
 
 Authentication :
 
-> Jwt token require and only blog role can use it
+> Jwt token require and only user/doctor role can use it
 
 Parameters :
 
@@ -1267,7 +1267,7 @@ Response :
 
 Authentication :
 
-> Jwt token require and only blog role can use it
+> Jwt token require and only user role can use it
 
 Parameters :
 
@@ -1307,7 +1307,7 @@ Response :
 
 Authentication :
 
-> Jwt token require and only blog role can use it
+> Jwt token require
 
 Parameters :
 
@@ -1355,7 +1355,7 @@ Response :
 
 Authentication :
 
-> Jwt token require and only blog role can use it
+> Jwt token require
 
 Parameters :
 
@@ -1392,6 +1392,145 @@ Response :
 ```
 
 - 404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+## Product
+
+### Create Product
+
+`POST product`
+
+Authentication :
+
+> Jwt token require (role isn't define at this time for demo)
+
+Parameters :
+
+> No parameters
+
+Body :
+
+- Data must be sent as FormData.
+
+| Name    | Type   | Description             |
+| ------- | ------ | ----------------------- |
+| name    | string | The product name        |
+| content | string | The product description |
+| price   | number | The product price       |
+| image   | file   | The product image       |
+
+Response : 
+
+- 201
+
+```json
+{
+    "message": string,
+    "status" : number
+}
+```
+
+- 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Get All Products
+
+`GET product`
+
+Authentication :
+
+> Jwt token require (role isn't define at this time for demo)
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response : 
+
+- 200
+
+```json
+{
+    "products": [
+        {
+            "_id": string,
+            "name": string,
+            "content": string,
+            "price": string,
+            "image_path": string,
+            "created_at": Date,
+            "__v": number
+        },
+        ...
+    ],
+    "status" : number
+}
+```
+
+- 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+## Order
+
+### Create Order
+
+`POST order`
+
+Authentication :
+
+> Jwt token require and only user role can use it
+
+Parameters :
+
+> No parameters
+
+Body :
+
+| Name         | Type   | Description                    |
+| ------------ | ------ | ------------------------------ |
+| id_product   | string | The product id                 |
+| email_doctor | string | The doctor email to send order |
+
+Response : 
+
+- 201
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 404/409/422/500
 
 ```json
 {
