@@ -34,4 +34,8 @@ node_modules/
 
 # Uploads image
 
-uploads/
+uploads/attachments/*
+uploads/prescriptions/*
+uploads/public/dailyPopup/*
+uploads/public/meals/*
+uploads/public/profilePicture/*
