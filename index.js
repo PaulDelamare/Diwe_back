@@ -17,6 +17,7 @@ const MealRoute = require('./routes/meal.routes');
 const EmailRoute = require('./routes/email.routes');
 const TrackingRoute = require('./routes/trackingEmail.routes');
 const ProductRoute = require('./routes/product.routes');
+const OrderRoute = require('./routes/order.routes');
 
 
 //Require Task
@@ -89,6 +90,7 @@ app.use('/api', DoctorRoute);
 app.use('/api', MealRoute);
 app.use('/api', EmailRoute);
 app.use('/api', ProductRoute);
+app.use('/api', OrderRoute);
 
 //////////
 //////////
