@@ -5,10 +5,6 @@ const Popup = require('../models/Popup');
 const uploadImage = require('../utils/uploadImage');
 //Import validateBody class for have an acces to validate rules
 const ValidateBody = require('../utils/validateBody');
-//Require fs (file system)
-const fs = require('fs');
-//Require path
-const path = require('path');
 //////////
 //////////
 
