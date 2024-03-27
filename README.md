@@ -1552,7 +1552,7 @@ Response :
 
 Authentication :
 
-> Jwt token require and only user role can use it
+> Jwt token require and only user/health role can use it
 
 Parameters :
 
@@ -1586,6 +1586,47 @@ Response :
 ```
 
 - 404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
+### Update Status Order
+
+`PUT order`
+
+Authentication :
+
+> Jwt token require and only health role can use it
+
+Parameters :
+
+> No parameters
+
+Body :
+
+| Name     | Type   | Description                                   |
+| -------- | ------ | --------------------------------------------- |
+| id_order | string | The order id                                  |
+| status   | string | The order status (pending, in progress, done) |
+
+Response : 
+
+- 200
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 401/404/422/500
 
 ```json
 {
