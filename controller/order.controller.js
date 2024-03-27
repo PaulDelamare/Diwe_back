@@ -123,5 +123,33 @@ exports.create = async (req, res) => {
     }
 }
 
+/**
++ * Retrieves all orders for a user.
++ *
++ * @param {Object} req - The request object.
++ * @param {Object} res - The response object.
++ * @return {Promise<void>} The function returns a Promise that resolves to undefined.
++ */
+exports.getAllOrders = async (req, res) => {
+    // Check the user validation
+    const user = await User.findById(req.user._id);
+    if(!user) {
+        // If user is not found
+        return res.status(404).json({ error: 'utilisateur non trouvé', status : 404 });
+    }
+    try {
+        // Find all orders for user
+        const orders = await Order.find({id_user: user._id});
+        // return this
+        res.status(200).json({orders: orders, status : 200});
+    } catch (error) {
+        // If an error occurs  send an error message
+        res.status(500).json({
+            error: error.message || 'Une erreur s\'est produite lors de la commande.',
+            status : 500
+        });
+    }
+}
+
 //////////
 //////////
