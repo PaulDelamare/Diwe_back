@@ -4,10 +4,15 @@
 const Product = require('../models/Product');
 //Import validateBody class for have an acces to validate rules
 const ValidateBody = require('../utils/validateBody');
+// Import Order model
 const Order = require('../models/Order');
+// Import User model
 const User = require('../models/User');
+// Import Doctor model
 const Doctor = require('../models/Doctor');
+// Import function for create pdf
 const { createAndUploadPdf } = require('../utils/createPdf');
+// Import send email function
 const sendEmail = require('../utils/sendEmail');
 //////////
 //////////
