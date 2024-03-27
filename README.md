@@ -1524,6 +1524,8 @@ Body :
 
 Response : 
 
+> This request send email to doctor
+
 - 201
 
 ```json
