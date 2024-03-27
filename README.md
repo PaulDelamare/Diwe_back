@@ -1546,6 +1546,56 @@ Response :
 
 > The message and the status error depends on the error
 
+### Get All Order
+
+`GET order`
+
+Authentication :
+
+> Jwt token require and only user role can use it
+
+Parameters :
+
+> No parameters
+
+Body :
+
+> No body
+
+Response : 
+
+- 200
+
+```json
+{
+    "orders": [
+        {
+            "_id": string,
+            "id_product": string,
+            "id_user": string,
+            "product_name": string,
+            "email_doctor": string,
+            "status": string,
+            "created_at": Date,
+            "__v": number
+        },
+        ...
+    ],
+    "status": number
+}
+```
+
+- 404/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
