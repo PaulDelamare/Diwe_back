@@ -21,9 +21,6 @@ coverage
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
-# Dependency directories
-node_modules/
-
 # dotenv environment variable files
 .env
 .env.test
@@ -31,7 +28,6 @@ node_modules/
 # IDE / Editor folders
 .idea
 .vscode
-
 # Uploads image
 
 uploads/attachments/*
@@ -40,3 +36,4 @@ uploads/public/dailyPopup/*
 uploads/public/meals/*
 uploads/public/profilePicture/*
 uploads/public/product/*
+uploads/orders/*
