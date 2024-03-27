@@ -183,5 +183,73 @@ exports.getAllOrders = async (req, res) => {
     }
 }
 
+/**
++ * A function to change the status of a user's order.
++ *
++ * @param {Object} req - the request object
++ * @param {Object} res - the response object
++ * @return {Object} JSON response with status code and message
++ */
+exports.changeStatus = async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if(!user) {
+        // If user is not found
+        return res.status(404).json({ error: 'utilisateur non trouvé', status : 404 });
+    }
+
+    //Validation
+    const validateBody = new ValidateBody();
+
+    //Check if image is correct
+    validateBody.validateObjectId('id_order', true);
+    //Check if name is correct
+    validateBody.orderStatusValidator('status', true);
+
+    //Check the rules with data in body
+    let valideBody = await validateBody.validateRules(req);
+
+    // Check for validation errors
+    if (!valideBody.isEmpty()) {
+        // Return a JSON response with the determined status code
+        return res.status(422).json({ errors: valideBody.array(), status: 422 });
+    }
+
+    // Get the order from database
+    const order = await Order.findById(req.body.id_order);
+    // If the order doesn't exist
+    if(!order){
+        // Return a JSON response with the determined status code
+        return res.status(404).json({ error: 'La commande n\'a pas été trouvé', status : 404 });
+    }
+
+    // Get doctor
+    const doctor = await Doctor.findOne({id_user: user._id});
+    // If doctor is not found
+    if(!doctor) {
+        // If doctor is not found
+        return res.status(404).json({ error: 'Le professionnel n\'est pas valide', status : 404 });
+    }
+
+    // Check if the doctor is the same
+    if(order.id_doctor.toString() !== doctor._id.toString()){
+        // If doctor is not found
+        return res.status(401).json({ error: 'Le professionnel n\'est pas valide', status : 401 });
+    }
+
+    try {
+        // Update the order status
+        await Order.updateOne({ _id: req.body.id_order }, { status: req.body.status });
+
+        // return success
+        res.status(200).json({message: 'Le statut de la commande a été correctement enregisté', status : 200});
+    } catch (error) {
+        // If an error occurs  send an error message
+        res.status(500).json({
+            error: error.message || 'Une erreur s\'est produite lors de la commande.',
+            status : 500
+        });
+    }
+}
+
 //////////
 //////////
