@@ -1,0 +1,30 @@
+{{{header}}}
+
+<div class="body">
+    <img width="1px" height="1px" src="{{trackingPixel}}" alt="Read ?"/>
+
+    <h3>Bonjour {{firstname}} !</h3>
+    <div class="first-paragraph">
+        <p>
+            Vous retrouverez en pièce jointe une commande réalisé par : {{email}} ( {{user}} )
+        </p>
+        <p>
+            En cas de probème, vous pouvez contacter le service client : {{emailService}}
+        </p>
+    </div>
+    <div>
+        <p>Nous vous souhaitons la meilleure expérience possible sur Diwe !</p>
+    </div>
+</div>
+<style>
+    .body {
+        color: #004396;
+        word-wrap: break-word;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+</style>
+{{{footer}}}
