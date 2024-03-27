@@ -449,6 +449,28 @@ class ValidateBody{
         // Push rules in rules array
         this._addValidationRule(validationRule);
     }
+
+    /**
+    + * Validates the order status based on the provided role and requirement.
+    + *
+    + * @param {string} status - The status of the order status. Must be "pending", "in progress", or "done".
+    + * @param {boolean} require - Indicates whether the status is required or not.
+    + * @return {void} This function does not return a value.
+    + */
+    orderStatusValidator(status, require){
+        const validationRule = check(status);
+
+        // Add basic rules for status (Must be "user", "health" or "blog")
+        validationRule.isIn(['pending', 'in progress', 'done']).withMessage('Le status doit être "pending", "in progress" ou "done"');
+
+        // Add conditionnal rules (require or not)
+        if (require) {
+            validationRule.notEmpty().withMessage('Le rôle est obligatoire');
+        }
+
+        // Push rules in rules array
+        this._addValidationRule(validationRule);
+    }
       
     //////////
     //////////
