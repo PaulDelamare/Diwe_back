@@ -21,8 +21,6 @@ coverage
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
-# Dependency directories
-
 # dotenv environment variable files
 .env
 .env.test
@@ -38,3 +36,4 @@ uploads/public/dailyPopup/*
 uploads/public/meals/*
 uploads/public/profilePicture/*
 uploads/public/product/*
+uploads/orders/*
