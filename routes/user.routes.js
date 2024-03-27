@@ -5,7 +5,7 @@ const router = express.Router();
 //For receive information from form data
 const multer  = require('multer');
 const upload = multer().single('image');
-const uploadPrescription = multer().single('prescritpion');
+const uploadPrescription = multer().single('prescription');
 //Import controller
 const UserController = require('../controller/user.controller');
 //Import connection verification

@@ -512,6 +512,7 @@ Response :
 ```json
 {
     "message": string,
+    "image": string,
     "status": number
 }
 ```
