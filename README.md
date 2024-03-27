@@ -1637,6 +1637,52 @@ Response :
 
 > The message and the status error depends on the error
 
+## MedicalData (iot)
+
+### Add data in db 
+
+`POST medicalData`
+
+Authentication :
+
+> No authorization
+
+Parameters :
+
+> No parameters
+
+Body :
+
+- Data must be sent as FormData.
+
+| Name    | Type   | Description   |
+| ------- | ------ | ------------- |
+| oxygen  | string | The oxygen    |
+| pulse   | string | The pulsation |
+| id_user | string | The user id   |
+
+Response : 
+
+- 201
+
+```json
+{
+    "message": string,
+    "status": number
+}
+```
+
+- 404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
