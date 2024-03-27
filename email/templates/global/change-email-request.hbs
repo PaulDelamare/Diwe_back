@@ -1,0 +1,41 @@
+{{{header}}}
+
+<div class="body">
+    <img width="1px" height="1px" src="{{trackingPixel}}" alt="Read ?"/>
+
+    <h3>Bonjour {{firstname}} !</h3>
+    <div class="first-paragraph">
+        <p>
+            Une demande de changement d'email a été faites à cet adresse email.
+        </p>
+        <p>
+            Pour la confirmer, merci de bien voulair cliquer sur ce bouton
+        </p>
+    </div>
+    <div>
+        <a href="{{url}}verify-email-change?token={{token}}">Valider ma modification d'email</a>
+    </div>
+    <div>
+        <p>Si vous n'êtes pas à l'origine de cette action, merci de contacter le service client au plus vite : {{emailService}}</p>
+    </div>
+</div>
+<style>
+    .body {
+        color: #004396;
+        word-wrap: break-word;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+    .body a{
+        padding: .3rem 1rem;
+        border-radius: 10px;
+        background-color: #FF914D;
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+    }
+</style>
+{{{footer}}}

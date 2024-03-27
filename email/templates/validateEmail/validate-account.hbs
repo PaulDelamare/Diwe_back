@@ -1,0 +1,47 @@
+{{{header}}}
+
+<div class="body">
+    <img width="1px" height="1px" src="{{trackingPixel}}" alt="Read ?"/>
+
+    <h3> Bonjour {{ firstname }} !</h3>
+    <div class="first-paragraph">
+        <p>
+            Nous sommes heureux que vous aillez décider de créer un compte sur Diwe !
+        </p>
+        <p>
+            Nous essayerons au mieux de vous simplifier la vie grâce à notre application.
+        </p>
+    </div>
+    <div class="second-paragraph">
+        <p>Cependant il reste une dernière étape pour pouvoir valider la création de votre compte, il vous suffit de cliquer sur le bouton ci-dessous !</p>
+        <p>Cela nous permettra de valider qsue l'email utiliser pour la création de votre compte est bien le bon</p>
+    </div>
+    <div>
+        <a href="{{url}}validateAccount?email={{email}}&token={{token}}">Valider mon comptes</a>
+    </div>
+    <div class="last-paragraph">
+        <p>A bientôt sur Diwe !</p>
+    </div>
+</div>
+<style>
+    .body {
+        color: #004396;
+        word-wrap: break-word;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .body a{
+        padding: .3rem 1rem;
+        border-radius: 10px;
+        background-color: #FF914D;
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+</style>
+{{{footer}}}
