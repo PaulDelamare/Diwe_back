@@ -79,7 +79,7 @@ exports.create = async (req, res) => {
         // Add order in data base
         const order = await Order.create({
             id_product,
-            email_doctor: req.body.email_doctor,
+            id_doctor: doctor._id,
             id_user: user._id,
             product_name: product.name,
         });
@@ -137,9 +137,41 @@ exports.getAllOrders = async (req, res) => {
         // If user is not found
         return res.status(404).json({ error: 'utilisateur non trouvé', status : 404 });
     }
+
+    let doctor;
+    if(user.role === "health"){
+        doctor = await Doctor.findOne({id_user: user._id});
+        if(!doctor) {
+            // If doctor is not found
+            return res.status(404).json({ error: 'Le professionnel n\'est pas valide', status : 404 });
+        }
+    }
     try {
-        // Find all orders for user
-        const orders = await Order.find({id_user: user._id});
+
+        let orders;
+        if (user.role === "health") {
+        orders = await Order.find({ id_doctor: doctor._id }).populate({
+            path: 'id_user',
+            select: 'firstname email',
+        }).populate({
+            path: 'id_doctor',
+            select: 'firstname email',
+        }).populate({
+            path: 'id_product',
+            select: 'name image_path',
+        });
+        } else {
+        orders = await Order.find({ id_user: user._id }).populate({
+            path: 'id_user',
+            select: 'firstname email',
+        }).populate({
+            path: 'id_doctor',
+            select: 'firstname email',
+        }).populate({
+            path: 'id_product',
+            select: 'firstname image_path',
+        });
+        }
         // return this
         res.status(200).json({orders: orders, status : 200});
     } catch (error) {

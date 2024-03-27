@@ -15,7 +15,7 @@ const checkConnection = require ('../utils/validateRole');
 //Create order
 router.post('/order', checkConnection(['user']), OrderController.create);
 //Get all order
-router.get('/order', checkConnection(['user']), OrderController.getAllOrders);
+router.get('/order', checkConnection(['user', 'health']), OrderController.getAllOrders);
 
 //////////
 //////////
