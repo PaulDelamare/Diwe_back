@@ -7,6 +7,8 @@ const ValidateBody = require('../utils/validateBody');
 const Order = require('../models/Order');
 const User = require('../models/User');
 const Doctor = require('../models/Doctor');
+const { createAndUploadPdf } = require('../utils/createPdf');
+const sendEmail = require('../utils/sendEmail');
 //////////
 //////////
 
@@ -22,6 +24,7 @@ const Doctor = require('../models/Doctor');
 + * @return {Object} JSON response with success or error message
 + */
 exports.create = async (req, res) => {
+    // Check the user validation
     const user = await User.findById(req.user._id);
     if(!user) {
         return res.status(404).json({ error: 'utilisateur non trouvé', status : 404 });
@@ -49,17 +52,21 @@ exports.create = async (req, res) => {
 
     // Get product
     const product = await Product.findById(id_product);
-    // If product is not found
     if(!product) {
+        // If product is not found return error
         return res.status(404).json({ error: 'Le produit sélectionné n\'est pas valide', status : 404 });
     }
 
+    // get the doctor with email
     const doctor = await Doctor.findOne({email: req.body.email_doctor});
     if(!doctor) {
+        // If doctor is not found return error
         return res.status(404).json({ error: 'Le medecin sélectionné n\'est pas valide', status : 404 });
     }
 
+    // Check if user is linked to doctor
     if (!user.doctors_link.includes(doctor._id)) {
+        // If user is not linked to doctor
         return res.status(409).json({ error: 'Vous n\'êtes pas lié à ce médecin', status : 409 });
     }
 
@@ -72,16 +79,40 @@ exports.create = async (req, res) => {
             product_name: product.name,
         });
 
+        // Create the pdf for order
+        const pdf = await createAndUploadPdf(order, product, user);
+
+        // Add pcustom data to teplate
+        const emailData = {
+            email: user.email,
+            firstname: doctor.firstname,
+            user: user.firstname,
+            emailService: process.env.EMAIL_SERVICE
+        }
+
+        // Create attachment for the mail
+        const attachments = [
+            {
+                filename: pdf.originalname,
+                content: pdf.buffer,
+                encoding: 'base64',
+                encryptedPath: pdf.encryptedPath,
+            }
+        ]
+
+        // Send email
+        await sendEmail(doctor.email, user.email,'Commande', 'order/request-order', emailData, attachments);
+
         //If product is create return success
         res.status(201).json({ 
-            message: "Le produit a été correctement enregistré",
+            message: 'Le produit a été correctement enregistré',
             status : 201
-         });
+        });
 
     } catch (error) {
         //If an error occurs, send an error message
         res.status(500).json({
-            error: error.message || "Une erreur s'est produite lors de la commande.",
+            error: error.message || 'Une erreur s\'est produite lors de la commande.',
             status : 500
         });
     }
