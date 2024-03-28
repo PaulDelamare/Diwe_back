@@ -64,6 +64,13 @@ exports.postUserMedicalData = async (req, res) => {
     }
 }
 
+/**
++ * Get user's medical information based on the provided request and response objects.
++ *
++ * @param {Object} req - The request object containing user information.
++ * @param {Object} res - The response object to send back the medical information.
++ * @return {Object} - Returns the medical data for the user or an error response.
++ */
 exports.getUserMedicalInformation = async (req, res) => {
     // Get id_user
     const user = await User.findById(req.user._id);
