@@ -12,8 +12,10 @@ const checkConnection = require ('../utils/validateRole');
 //////////
 //API ROUTES
 
-//Get carbdata
+//Post carbdata
 router.post('/medicalData', MedicalDataController.postUserMedicalData);
+//Get carbdata
+router.get('/medicalData', checkConnection(['user', 'health']), MedicalDataController.getUserMedicalInformation);
 
 //////////
 //////////
