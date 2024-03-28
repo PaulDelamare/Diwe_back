@@ -1,6 +1,6 @@
 # Api Diwe
 
-This api is made by NodeJs and Mongo DB
+Diwe API is a RESTful API built with Node.js and MongoDB for a diabetes management application.
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ed275fb8490446f8a085a0d5a6481a2e)](https://app.codacy.com/gh/PaulDelamare/Diwe_back/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
