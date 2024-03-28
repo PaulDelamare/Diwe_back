@@ -1,6 +1,7 @@
 //////////
 //REQUIRE
 //Import medical data model
+const Doctor = require('../models/Doctor');
 const MedicalData = require('../models/MedicalData');
 // Import user model
 const User = require('../models/User');
@@ -60,6 +61,71 @@ exports.postUserMedicalData = async (req, res) => {
     } catch (error) {
         // If an error occurs, return a JSON response with code 500 Internal Server Error
         res.status(500).json({ error: 'Erreur lors de l\'enregistrement des données', status : 500 }); 
+    }
+}
+
+exports.getUserMedicalInformation = async (req, res) => {
+    // Get id_user
+    const user = await User.findById(req.user._id);
+    // if user is not found
+    if (!user) {
+        // Return error
+        return res.status(404).json({ error: 'Utilisateur non trouvé', status : 404 });
+    }
+
+    //Validation
+    //Instance validateBody
+    const validateBody = new ValidateBody();
+
+    //Validation
+    validateBody.numberValidator('limit', true, 0);
+
+    // If user id doctor
+    if (user.role === "health") {
+        validateBody.validateObjectId('id_user', true);
+    }
+    
+    // pass in fake body the data to check
+    const reqBody = {
+        body : {
+            limit : req.query.limit,
+            id_user : req.query.id || user._id
+        }
+    }
+    //Validate rules
+    const valideBody = await validateBody.validateRules(reqBody);
+
+    //If one rule is'nt valid, return error
+    if (!valideBody.isEmpty()) {
+        // If errors are present, return a JSON response with code 422 Unprocessable Entity
+        return res.status(422).json({ errors: valideBody.array(), status : 422 });
+    }
+
+    // If user is doctor
+    if (user.role === "health") {
+        // Find his doctor information
+        const doctor = await Doctor.findOne({id_user: user._id});
+        // If doctor is not found
+        if (!doctor) {
+            // Return error
+            return res.status(404).json({ error: 'Docteur non trouvé', status : 404 });
+        }
+        // If doctor isn't linked to the user
+        if (!doctor.users_link.includes(reqBody.body.id_user)) {
+            // Return error
+            return res.status(401).json({ error: 'Utilisateur non trouvé', status : 401 }); 
+        }
+    }
+
+    try {
+        // Get medical data
+        const medicalData = await MedicalData.find({ id_user : reqBody.body.id_user }).limit(reqBody.body.limit);
+        // return data
+        res.status(200).json({ data : medicalData, status : 200 });
+        
+    } catch (error) {
+        // If an error occurs, return a JSON response with code 500 Internal Server Error
+        res.status(500).json({ error: error, status : 500 });
     }
 }
 
