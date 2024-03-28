@@ -2,6 +2,7 @@
 
 This api is made by NodeJs and Mongo DB
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a6fbe5b2b444303a22d4ed40a7a0ab1)](https://app.codacy.com/gh/PaulDelamare/Diwe_back?utm_source=github.com&utm_medium=referral&utm_content=PaulDelamare/Diwe_back&utm_campaign=Badge_Grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/d8684815b92b492e909bd6128e5471b0)](https://app.codacy.com/gh/PaulDelamare/Diwe_back/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## Installation
