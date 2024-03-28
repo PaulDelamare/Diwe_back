@@ -1683,6 +1683,55 @@ Response :
 
 > The message and the status error depends on the error
 
+### Get Medical Data 
+
+`GET medicalData?limit={limit}&id={id_user}`
+
+Authentication :
+
+> Jwt token require and only user/health role can use it
+
+Parameters :
+
+> Limit for the number of data to get
+> Id for the id_user to see (onbly for health role and doctor linked to this user)
+
+Body :
+
+> No body
+
+Response : 
+
+- 200
+
+```json
+{
+    "data": [
+        {
+            "_id": string,
+            "id_user": string,
+            "pulse": number,
+            "oxygen": numebr,
+            "date": Date,
+            "__v": number
+        },
+        ...
+    ],
+    "status": number
+}
+```
+
+- 401/404/422/500
+
+```json
+{
+  "error": string,
+  "status": number
+}
+```
+
+> The message and the status error depends on the error
+
 ## Popup
 
 ### Create Daily popup
