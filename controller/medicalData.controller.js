@@ -28,7 +28,6 @@ exports.postUserMedicalData = async (req, res) => {
 
     //Validation
     validateBody.numberValidator('pulse', true);
-    validateBody.numberValidator('oxygen', true);
     validateBody.validateObjectId('id_user', true);
 
     //Validate rules
@@ -53,7 +52,6 @@ exports.postUserMedicalData = async (req, res) => {
         await MedicalData.create({
             id_user: req.body.id_user,
             pulse: req.body.pulse,
-            oxygen: req.body.oxygen
         });
 
         // If success, return a JSON response with code 201 Created

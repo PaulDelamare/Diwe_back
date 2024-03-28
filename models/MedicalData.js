@@ -21,10 +21,6 @@ const MedicalSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    oxygen: {
-        type: Number,
-        required: true
-    }
 });
 
 //////////
