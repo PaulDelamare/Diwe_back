@@ -119,7 +119,7 @@ exports.getUserMedicalInformation = async (req, res) => {
 
     try {
         // Get medical data
-        const medicalData = await MedicalData.find({ id_user : reqBody.body.id_user }).limit(reqBody.body.limit);
+        const medicalData = await MedicalData.find({ id_user : reqBody.body.id_user }).sort({ date: -1 }).limit(reqBody.body.limit);
         // return data
         res.status(200).json({ data : medicalData, status : 200 });
         
