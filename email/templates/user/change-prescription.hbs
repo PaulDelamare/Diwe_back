@@ -1,0 +1,30 @@
+{{{header}}}
+
+<div class="body">
+    <img width="1px" height="1px" src="{{trackingPixel}}" alt="Read ?"/>
+
+    <h3>Bonjour {{ firstname }} !</h3>
+    <div class="first-paragraph">
+        <p class="important-information" >
+            Votre ordonnance vient d'être modifié.
+        </p>
+        <p>
+            Si vous n'êtes pas à l'origine de cette action, merci de contacter le service client au plus vite : {{ emailService }}
+        </p>
+    </div>
+</div>
+<style>
+    .body {
+        color: #004396;
+        word-wrap: break-word;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    .body .important-information{
+        font-weight: bold;
+    }
+</style>
+{{{footer}}}
