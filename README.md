@@ -4,12 +4,29 @@ This api is made by NodeJs and Mongo DB
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ed275fb8490446f8a085a0d5a6481a2e)](https://app.codacy.com/gh/PaulDelamare/Diwe_back/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
+## Explanation
+
+This project was carried out for a school project focused on the theme of diabetes. The aim of the application is therefore to provide help to diabetics in their data control and better simplicity in contact with their healthcare professionals.
+This is therefore the API part which manages all the major functionality linked to the database. This api was released in node js using express.
+We used a structure using a Controller, a route and a model to process the data. The major functions used are found in the "utils" folder, and emails in the "email" folder.
+The API configuration, particularly for the jwt token or the email, is located in the “config” folder. And finally, the cron tasks allowing the execution of the code at a given time are located in "task"
+
 ## Installation
 
 1. Clone the repository
 2. Run `npm install`
 3. Create a database
-4. Copy the `.env.example` file to `.env` 
+4. Copy the `.env.example` file to `.env`
+5. Create these folders at the root :
+* uploads
+    * orders
+    * pdfs
+    * attachments
+    * prescriptions
+    * public
+        * dailyPopup
+        * meals
+        * profilePicture
 
 ## Usage
 
