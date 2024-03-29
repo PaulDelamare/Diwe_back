@@ -458,7 +458,7 @@ exports.findDoctor = async (req, res) => {
     const validateBody = new ValidateBody();
 
     //Check if link code is correct
-    validateBody.emailValidator('email', true, false, true);
+    validateBody.emailValidator('email', true, false, false);
 
     // Create fake body for validation
     const tempBody = { body: { email : email } };
@@ -476,7 +476,7 @@ exports.findDoctor = async (req, res) => {
         const doctor = await Doctor.findOne({ email: email }, 'email phone firstname lastname');
 
         //If all is correct, return message
-        return res.status(201).json({ doctor: doctor, status: 201 });
+        return res.status(200).json({ doctor: doctor, status: 200 });
     }catch(e){
         //If an error occurs, send an error message
         return res.status(500).json({ error: 'Une erreur est survenue lors de la demande de liaison de compte', status: 500 });
